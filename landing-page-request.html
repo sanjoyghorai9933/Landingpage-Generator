@@ -543,6 +543,94 @@
     }
 
     .card.section-hidden { display: none; }
+
+    /* ---------- Theme selection ---------- */
+    #themeScreen {
+        display: block;
+    }
+    .step-kicker {
+        color: var(--colorPrimary);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        margin: 0 0 8px;
+        text-transform: uppercase;
+    }
+    .theme-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 14px;
+        margin-top: 18px;
+    }
+    .theme-card {
+        width: 100%;
+        text-align: left;
+        background: #fff;
+        border: 2px solid var(--colorBorder);
+        border-radius: 12px;
+        padding: 0;
+        overflow: hidden;
+        cursor: pointer;
+        transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+    .theme-card:hover, .theme-card:focus {
+        border-color: rgba(138,105,28,0.55);
+        box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+        outline: none;
+        transform: translateY(-2px);
+    }
+    .theme-card.selected {
+        border-color: var(--colorPrimary);
+        box-shadow: 0 0 0 4px rgba(138,105,28,0.12), 0 8px 22px rgba(0,0,0,0.08);
+    }
+    .theme-preview-placeholder {
+        min-height: 128px;
+        background: linear-gradient(135deg, #f8f4ea 0%, #ffffff 58%, #eee7d7 100%);
+        border-bottom: 1px solid var(--colorBorder);
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: flex-end;
+    }
+    .theme-preview-placeholder .preview-bar {
+        height: 10px;
+        width: 44%;
+        border-radius: 999px;
+        background: var(--colorPrimary);
+    }
+    .theme-preview-placeholder .preview-panel {
+        height: 54px;
+        border-radius: 8px;
+        background: rgba(61,61,61,0.88);
+        position: relative;
+    }
+    .theme-preview-placeholder .preview-panel::after {
+        content: '';
+        position: absolute;
+        left: 12px; right: 46px; bottom: 12px;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.86);
+    }
+    .theme-card-body { padding: 16px; }
+    .theme-card-title {
+        color: var(--colorSecondary);
+        font-family: 'Muli', 'Roboto', Arial, sans-serif;
+        font-size: 16px;
+        font-weight: 800;
+        margin: 0 0 6px;
+    }
+    .theme-card-desc {
+        color: #777;
+        font-size: 13px;
+        line-height: 1.45;
+        margin: 0;
+    }
+    .theme-actions { margin-top: 20px; }
+    .theme-actions .submit-btn:disabled { background: #c8c1b3; }
+    #formScreen { display: none; }
+    #formScreen.active { display: block; }
 </style>
 </head>
 <body>
@@ -553,6 +641,23 @@
 </header>
 
 <main>
+    <section id="themeScreen" aria-labelledby="themeSelectionTitle">
+        <div class="progress">
+            <div class="seg active"></div><div class="seg"></div><div class="seg"></div>
+            <div class="seg"></div><div class="seg"></div><div class="seg"></div>
+        </div>
+        <div class="card">
+            <p class="step-kicker">Step 1 of 2</p>
+            <h2 id="themeSelectionTitle"><span class="num">1</span> Select Theme</h2>
+            <p class="hint">Choose the layout style to use for this landing page before entering project details.</p>
+            <div class="theme-grid" id="themeGrid" role="radiogroup" aria-label="Available landing page themes"></div>
+            <div class="error-msg" id="themeError">Please select a theme to continue.</div>
+            <div class="theme-actions">
+                <button type="button" class="submit-btn" id="continueThemeBtn" disabled>Continue to Project Details</button>
+            </div>
+        </div>
+    </section>
+
     <div id="formScreen">
         <div class="progress">
             <div class="seg active"></div><div class="seg active"></div><div class="seg active"></div>
@@ -886,6 +991,70 @@
    Point this at your hosted generate.php (see backend/README.md).
    ========================================================= */
 const WEBHOOK_URL = "https://luxury-residences.online/LP-Generator/backend/generate.php";
+const AVAILABLE_THEMES = [
+    {
+        id: 'default',
+        name: 'Default Theme',
+        description: 'A polished real-estate landing page layout with hero carousel, lead forms, pricing, gallery, amenities, and location sections.',
+    },
+];
+window.generatorState = window.generatorState || {};
+window.generatorState.selectedTheme = '';
+
+/* ---------- Theme selection ---------- */
+const themeScreen = document.getElementById('themeScreen');
+const formScreen = document.getElementById('formScreen');
+const themeGrid = document.getElementById('themeGrid');
+const themeError = document.getElementById('themeError');
+const continueThemeBtn = document.getElementById('continueThemeBtn');
+
+function selectTheme(themeId) {
+    window.generatorState.selectedTheme = themeId;
+    themeError.style.display = 'none';
+    continueThemeBtn.disabled = false;
+    themeGrid.querySelectorAll('.theme-card').forEach(card => {
+        const selected = card.dataset.themeId === themeId;
+        card.classList.toggle('selected', selected);
+        card.setAttribute('aria-checked', selected ? 'true' : 'false');
+        card.tabIndex = selected ? 0 : -1;
+    });
+}
+
+function renderThemeCards() {
+    themeGrid.innerHTML = AVAILABLE_THEMES.map((theme, index) => `
+        <button type="button" class="theme-card" role="radio" aria-checked="false" data-theme-id="${theme.id}" tabindex="${index === 0 ? '0' : '-1'}">
+            <div class="theme-preview-placeholder" aria-hidden="true">
+                <div class="preview-bar"></div>
+                <div class="preview-panel"></div>
+            </div>
+            <div class="theme-card-body">
+                <h3 class="theme-card-title">${theme.name}</h3>
+                <p class="theme-card-desc">${theme.description}</p>
+            </div>
+        </button>
+    `).join('');
+    themeGrid.querySelectorAll('.theme-card').forEach(card => {
+        card.addEventListener('click', () => selectTheme(card.dataset.themeId));
+        card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                selectTheme(card.dataset.themeId);
+            }
+        });
+    });
+}
+
+renderThemeCards();
+
+continueThemeBtn.addEventListener('click', () => {
+    if (!window.generatorState.selectedTheme) {
+        themeError.style.display = 'block';
+        return;
+    }
+    themeScreen.style.display = 'none';
+    formScreen.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 
 /* ---------- Section picker (nav-driven show/hide) ---------- */
 const sectionPickerBtn = document.getElementById('sectionPickerBtn');
@@ -1269,6 +1438,7 @@ form.addEventListener('submit', async (e) => {
     // required text fields
     const required = ['projectName', 'priceRange', 'address', 'phone', 'toEmail'];
     let missing = required.some(id => !document.getElementById(id).value.trim());
+    if (!window.generatorState.selectedTheme) missing = true;
 
     // required image: at least the first slider image
     const sliderItems = sliderRepeater.getItems();
@@ -1284,6 +1454,7 @@ form.addEventListener('submit', async (e) => {
     submitBtn.textContent = 'Submitting...';
 
     const fd = new FormData();
+    fd.append('theme', window.generatorState.selectedTheme);
     fd.append('projectName', document.getElementById('projectName').value.trim());
     fd.append('statusBadge', document.getElementById('statusBadge').value.trim());
     fd.append('priceRange', document.getElementById('priceRange').value.trim());
