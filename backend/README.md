@@ -21,6 +21,34 @@ backend/
     └── zips/                     ← generated .zip files land here (public)
 ```
 
+
+## Theme architecture
+
+The backend generator is theme-agnostic. It validates the request, copies shared
+assets/templates, prepares normalized generation data, and delegates landing-page
+markup to the selected theme. If no `theme` field is submitted, the generator
+loads the `default` theme, which preserves the original landing page output.
+
+```
+backend/
+├── core/
+│   ├── ThemeInterface.php        ← theme contract documentation
+│   ├── ThemeRegistry.php         ← available theme map
+│   └── ThemeLoader.php           ← selected/default theme resolution
+└── themes/
+    └── default/
+        ├── config.php            ← Default Theme metadata/config
+        ├── renderer.php          ← token renderer for the default template
+        ├── components/           ← reusable theme component renderers
+        ├── schemas/              ← theme field/upload schema
+        ├── styles/               ← theme style defaults
+        └── templates/            ← theme HTML template
+```
+
+To add a new theme, create a folder under `backend/themes/`, expose the same
+configuration keys as `backend/themes/default/config.php`, then register it in
+`backend/core/ThemeRegistry.php`.
+
 ## Live deployment (luxury-residences.online, GoDaddy cPanel)
 
 This copy is already configured for:

@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <link rel="icon" href="assets/logo.png" sizes="16x16" />
+        <title>{{PAGE_TITLE}}</title>
+        <style>
+            :root {
+                --colorPrimary: {{COLOR_PRIMARY}};
+                --colorSecondary: {{COLOR_SECONDARY}};
+                --colorBtn: {{COLOR_BTN}};
+                --colorCard: {{COLOR_CARD}};
+                --colorOverlay: {{COLOR_OVERLAY}};
+            }
+            #loader {
+                width: 100vw;
+                height: 100vh;
+                background-color: rgba(255, 255, 255, 1);
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 1040;
+            }
+            .loader-text {
+                display: block;
+                text-align: center;
+                color: #d7d7d7;
+                font-family: Arial, sans-serif;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                -webkit-transform: translate(-50%, -50%);
+                -moz-transform: translate(-50%, -50%);
+                -ms-transform: translate(-50%, -50%);
+                -o-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+            }
+            .loading {
+                height: 0;
+                width: 0;
+                padding: 4vw;
+                border: 0.8vw solid #ccc;
+                border-right-color: var(--colorPrimary);
+                border-radius: 6vw;
+                -webkit-animation: rotate 1s infinite linear;
+            }
+            @keyframes loader {
+                0% {
+                    filter: grayscale(0);
+                }
+                50% {
+                    filter: grayscale(100%);
+                }
+                100% {
+                    filter: grayscale(0);
+                }
+            }
+            .loader-logo {
+                width: 300px;
+                -webkit-animation: loader 1.3s infinite linear;
+                -moz-animation: loader 1.3s infinite linear;
+                -ms-animation: loader 1.3s infinite linear;
+                -o-animation: loader 1.3s infinite linear;
+                animation: loader 1.3s infinite linear;
+            }
+            .pload {
+                display: none;
+            }
+            .banner-form {
+    padding: 20px !important;
+}
+        </style>
+        <link rel="preload" href="assets/css/style.css" as="style" />
+        <link rel="preload" href="assets/js/app.js" as="script" />
+        <link rel="preload" href="assets/fonts/roboto-bold-webfont.woff2" as="font" type="font/woff2" crossorigin="" />
+        <link rel="preload" href="assets/fonts/roboto-regular-webfont.woff2" as="font" type="font/woff2" crossorigin="" />
+        <link rel="preload" href="assets/fonts/muli-variablefont_wght-webfont.woff2" as="font" type="font/woff2" crossorigin="" />
+        <link rel="preload" href="assets/fonts/micon.woff2" as="font" type="font/woff2" crossorigin="" />
+        <link rel="dns-prefetch" href="about/analytics/index.htm" crossorigin="" />
+        <link rel="dns-prefetch" href="//googletagmanager.com" crossorigin="" />
+        <link rel="dns-prefetch" href="//www.googleadservices.com" crossorigin="" />
+        <link rel="dns-prefetch" href="about/enterprise/index.htm" crossorigin="" />
+        <link rel="dns-prefetch" href="//zopim.com" crossorigin="" />
+        <link rel="dns-prefetch" href="index-1.htm" crossorigin="" />
+        <link rel="dns-prefetch" href="index-2.htm" crossorigin="" />
+        <link rel="stylesheet" href="assets/css/style.css" />
+        <script src="assets/js/app.js" defer=""></script>
+        <!-- Google tag (gtag.js) — filled in per-project, blank if not configured -->
+        {{GTAG_HEAD_SNIPPET}}
+    </head>
+    <body data-spy="scroll" data-target="#navbarNav">
+        <div id="loader">
+            <span class="loader-text"><img src="assets/logo.png
+" class="loader-logo" /></span>
+        </div>
+        <style>
+            @media only screen and (min-width: 992px) {
+                .info-box {
+                    width: 22vw;
+                    top: 8px;
+                    left: 10px;
+                    background-color: #fff;
+                    color: #000;
+                    text-align: center;
+                    border-radius: 8px;
+                    padding: 0 10px;
+                    font-weight: 400;
+                }
+                .pro-status {
+                    display: block;
+                    text-shadow: none;
+                    color: var(--colorPrimary);
+                    background-color: transparent;
+                    padding: 0.6vw 2.5vw 0.3vw 2vw;
+                    font-weight: 700;
+                }
+                .pro-title,
+                .pro-add,
+                .pro-dev,
+                ul.pro-spec,
+                .info-box span.heading,
+                .pro-tag-line,
+                .pro-price,
+                .pro-rera {
+                    text-shadow: none;
+                    color: #000;
+                    font-weight: 400;
+                }
+                .pro-title {
+                    padding: 0.5vw 0.8vw 0.3vw;
+                }
+                .pro-title,
+                .pro-add,
+                .pro-price {
+                    font-weight: 700;
+                }
+                ul.pro-spec {
+                    background-color: transparent;
+                    margin-bottom: 0;
+                }
+                .info-box span.list-icon {
+                    display: none;
+                }
+                .pro-rera {
+                    font-size: 0.8vw;
+                }
+            }
+            .info-box hr {
+                margin: 3px 0;
+            }
+            .animated {
+                -webkit-animation-duration: 1s;
+                animation-duration: 1s;
+                -webkit-animation-fill-mode: both;
+                animation-fill-mode: both;
+            }
+            .animated.infinite {
+                -webkit-animation-iteration-count: infinite;
+                animation-iteration-count: infinite;
+            }
+            @-webkit-keyframes bounceIn {
+                from,
+                20%,
+                40%,
+                60%,
+                80%,
+                to {
+                    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+                    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+                }
+                0% {
+                    opacity: 0;
+                    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+                    transform: scale3d(0.3, 0.3, 0.3);
+                }
+                20% {
+                    -webkit-transform: scale3d(1.1, 1.1, 1.1);
+                    transform: scale3d(1.1, 1.1, 1.1);
+                }
+                40% {
+                    -webkit-transform: scale3d(0.9, 0.9, 0.9);
+                    transform: scale3d(0.9, 0.9, 0.9);
+                }
+                60% {
+                    opacity: 1;
+                    -webkit-transform: scale3d(1.03, 1.03, 1.03);
+                    transform: scale3d(1.03, 1.03, 1.03);
+                }
+                80% {
+                    -webkit-transform: scale3d(0.97, 0.97, 0.97);
+                    transform: scale3d(0.97, 0.97, 0.97);
+                }
+                to {
+                    opacity: 1;
+                    -webkit-transform: scale3d(1, 1, 1);
+                    transform: scale3d(1, 1, 1);
+                }
+            }
+            @keyframes bounceIn {
+                from,
+                20%,
+                40%,
+                60%,
+                80%,
+                to {
+                    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+                    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+                }
+                0% {
+                    opacity: 0;
+                    -webkit-transform: scale3d(0.3, 0.3, 0.3);
+                    transform: scale3d(0.3, 0.3, 0.3);
+                }
+                20% {
+                    -webkit-transform: scale3d(1.1, 1.1, 1.1);
+                    transform: scale3d(1.1, 1.1, 1.1);
+                }
+                40% {
+                    -webkit-transform: scale3d(0.9, 0.9, 0.9);
+                    transform: scale3d(0.9, 0.9, 0.9);
+                }
+                60% {
+                    opacity: 1;
+                    -webkit-transform: scale3d(1.03, 1.03, 1.03);
+                    transform: scale3d(1.03, 1.03, 1.03);
+                }
+                80% {
+                    -webkit-transform: scale3d(0.97, 0.97, 0.97);
+                    transform: scale3d(0.97, 0.97, 0.97);
+                }
+                to {
+                    opacity: 1;
+                    -webkit-transform: scale3d(1, 1, 1);
+                    transform: scale3d(1, 1, 1);
+                }
+            }
+            .bounceIn {
+                -webkit-animation-duration: 0.75s;
+                animation-duration: 0.75s;
+                -webkit-animation-name: bounceIn;
+                animation-name: bounceIn;
+            }
+            .offer {
+                display: block;
+                padding: 8px;
+                font-size: 13px;
+                font-weight: 700;
+            }
+            .offer-top {
+                background: #76bc4e;
+                border-radius: 8px 8px 0px 0px;
+            }
+            .offer-bottom {
+                background: #d1e9fc;
+                border-radius: 0px 0px 8px 8px;
+            }
+            .offer-bg-animation {
+                color: var(--colorBtn);
+                display: block;
+                background: linear-gradient(-45deg, var(--colorPrimary), var(--colorSecondary), var(--colorPrimary), var(--colorSecondary));
+                background-size: 400% 400%;
+                -webkit-animation: Gradient 3s ease infinite;
+                -moz-animation: Gradient 3s ease infinite;
+                animation: Gradient 3s ease infinite;
+            }
+            .gallery-thumb {
+                width: 100%;
+                height: 150px;
+                opacity: 1;
+                transition: all 0.5s;
+                border-radius: 3px;
+            }
+            .gallery-thumb:hover {
+                box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+                -webkit-transform: scale(1.05);
+                -moz-transform: scale(1.05);
+                -ms-transform: scale(1.05);
+                -o-transform: scale(1.05);
+                transform: scale(1.05);
+            }
+            @media only screen and (min-width: 575px) {
+                .gallery-thumb {
+                    height: 150px;
+                }
+            }
+            @media only screen and (max-width: 575px) {
+                .gallery-thumb {
+                    height: 100px;
+                }
+            }
+            .gallery-slider.owl-carousel .item,
+            .floorplan-slider.owl-carousel .item {
+                padding: 0 5px;
+            }
+            .gallery-slider.owl-carousel .gallery-thumb {
+                width: 100%;
+            }
+            /* ---------- Simple built-in lightbox (used by Gallery / Floor Plan "click to view") ---------- */
+            .simple-lightbox-overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.92);
+                display: none;
+                align-items: center;
+                justify-content: center;
+                z-index: 2000;
+                padding: 20px;
+            }
+            .simple-lightbox-overlay.active { display: flex; }
+            .simple-lightbox-overlay img {
+                max-width: 92vw;
+                max-height: 88vh;
+                border-radius: 4px;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            }
+            .simple-lightbox-close,
+            .simple-lightbox-prev,
+            .simple-lightbox-next {
+                position: absolute;
+                background: rgba(255, 255, 255, 0.15);
+                color: #fff;
+                border: none;
+                width: 44px;
+                height: 44px;
+                border-radius: 50%;
+                font-size: 22px;
+                line-height: 1;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .simple-lightbox-close:hover,
+            .simple-lightbox-prev:hover,
+            .simple-lightbox-next:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+            .simple-lightbox-close { top: 18px; right: 18px; }
+            .simple-lightbox-prev { left: 18px; top: 50%; transform: translateY(-50%); }
+            .simple-lightbox-next { right: 18px; top: 50%; transform: translateY(-50%); }
+            @media only screen and (max-width: 575px) {
+                .simple-lightbox-prev, .simple-lightbox-next { width: 36px; height: 36px; font-size: 18px; }
+                .simple-lightbox-close { width: 36px; height: 36px; font-size: 18px; }
+            }
+            .new-pricing-section {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 10px;
+                text-transform: capitalize;
+                font-size: 15px;
+            }
+            .new-pricing-section .p-block {
+                background: var(--colorCard);
+                background-position: center right;
+                background-size: cover;
+                cursor: pointer;
+                border-radius: 1vw;
+                overflow: hidden;
+            }
+            .new-pricing-section .p-block .p-block-overlay {
+                background-color: transparent;
+                background-image: linear-gradient(180deg, var(--colorOverlay) 0%, transparent 100%);
+                opacity: 0.9;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                padding: 20px;
+                transition: background 0.3s, border-radius 0.3s, opacity 0.3s;
+            }
+            .new-pricing-section .p-block:hover .p-block-overlay {
+                opacity: 1;
+            }
+            .new-pricing-section .p-block .type {
+                font-size: 20px;
+                font-weight: bold;
+                color: var(--colorPrimary);
+                margin-bottom: 10px;
+            }
+            .new-pricing-section .p-block .conf {
+                display: block;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                padding: 5px 0;
+                color: var(--colorBtn);
+            }
+            .new-pricing-section .p-block .conf span {
+                display: block;
+                border-top: 1px solid rgba(255, 255, 255, 0.2);
+                padding: 5px 0 0;
+                margin-top: 5px;
+                color: inherit;
+            }
+            .new-pricing-section .p-block .price {
+                color: var(--colorBtn);
+                margin-top: 0.5vw;
+            }
+            .new-pricing-section .p-block .p-enqbtn {
+                display: inline-block;
+                color: var(--colorPrimary);
+                font-weight: bold;
+                background-color: transparent;
+                border-bottom: 2px solid transparent;
+                transition: all 0.3s;
+                padding-bottom: 5px;
+                margin-top: 15px;
+            }
+            .new-pricing-section .p-block:hover .p-enqbtn {
+                padding-left: 0.5vw;
+                border-color: var(--colorPrimary);
+            }
+            @media only screen and (min-width: 992px) {
+                .new-pricing-section {
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 1.2vw;
+                }
+                .new-pricing-section {
+                    font-size: 1vw;
+                }
+                .new-pricing-section .p-block .type {
+                    font-size: 1.6vw;
+                    margin-bottom: 1vw;
+                }
+                .new-pricing-section .p-block .p-block-overlay {
+                    padding: 2.5vw 1.5vw;
+                    min-height: 20vw;
+                }
+                .new-pricing-section .p-block .conf {
+                    padding: 0.5vw 0;
+                }
+                .new-pricing-section .p-block .conf span {
+                    padding: 0.5vw 0 0;
+                    margin-top: 0.5vw;
+                }
+                .new-pricing-section .p-block .p-enqbtn {
+                    margin-top: 1.5vw;
+                    padding-bottom: 0.3vw;
+                }
+            }
+        </style>
+        <header class="micro-nav fixed-top pload">
+            <nav class="navbar navbar-expand-lg navbar-light bg-white micro-navbar">
+                <a class="navbar-brand" href="#" onclick="return false"><img src="assets/logo.png
+" class="logo" /></a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav nav-fill">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#home"><i class="mi mi-home nav-icon"></i><span class="d-sm-inline d-md-none"> Home</span></a>
+                        </li>
+                        <!--SECTION:PRICE_START-->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#pricing"><i class="mi mi-price nav-icon"></i> Price</a>
+                        </li>
+                        <!--SECTION:PRICE_END-->
+                        <!--SECTION:FLOORPLAN_START-->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#sitefloorplan"><i class="mi mi-siteplan nav-icon"></i> Site &amp; Floor Plan</a>
+                        </li>
+                        <!--SECTION:FLOORPLAN_END-->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#amenities"><i class="mi mi-ami nav-icon"></i> Amenities</a>
+                        </li>
+                        <!--SECTION:GALLERY_START-->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#gallery"><i class="mi mi-gallery nav-icon"></i> Gallery</a>
+                        </li>
+                        <!--SECTION:GALLERY_END-->
+                        <!--SECTION:LOCATION_START-->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#location"><i class="mi mi-location nav-icon"></i> Location</a>
+                        </li>
+                        <!--SECTION:LOCATION_END-->
+                        <!--SECTION:DEVELOPER_START-->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#developer"><i class="mi mi-sitevisit nav-icon"></i> About Builder</a>
+                        </li>
+                        <!--SECTION:DEVELOPER_END-->
+                        <li class="nav-item overflow-hidden">
+                            <a
+                                class="nav-link enqModal"
+                                href="#"
+                                data-form="md"
+                                data-title="Download brochure"
+                                data-btn="Download now"
+                                data-enquiry="Ebook Download"
+                                data-redirect="brochure"
+                                data-redirect-file="brochure.pdf"
+                                data-toggle="modal"
+                                data-target="#enqModal"
+                            >
+                                <i class="mi mi-download nav-icon d-inline-block animated slideInDown infinite"></i> Brochure
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+        <main class="pload">
+            <div
+                id="home"
+                class="carousel slide micro-main-slider lazyload"
+                data-script="./assets/plugins/fancybox/jquery.fancybox.min.js"
+                data-link="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"
+                data-ride="carousel"
+            >
+                <ol class="carousel-indicators">
+                    {{SLIDER_INDICATORS}}
+                </ol>
+                <div class="carousel-inner">
+                    {{SLIDER_ITEMS}}
+                </div>
+            </div>
+            <div class="info-box overflow-hidden text-center">
+               
+                <span class="pro-status">{{STATUS_BADGE}}</span>
+                <div class="info-box-border"><span class="pro-title" style="font-size:20px">{{PROJECT_NAME}}</span> <span class="pro-add">{{ADDRESS}}</span>
+<!--<span class="pro-dev">by Prestige Group</span>-->
+                <ul class="pro-spec">
+               <li><span class="list-icon">&rtrif;</span> <span class="heading">Land Area  </span> :   {{LAND_AREA}}</li>
+               <li><span class="list-icon">&rtrif;</span> <span class="heading">{{TOTAL_UNITS}}</span>  </li>
+			   <li><span class="list-icon">&rtrif;</span> <span class="heading">Floors : {{FLOORS}}</span>  </li>
+            </ul>
+        </div>
+                <span class="d-block mt-1 text-capitalize bold mb-1 offer-bg-animation" style="padding: 5px; font-weight: bold;">
+                    <center>
+                        <span class="d-block text-center" style="color: var(--colorBtn); font-size: 14px;">
+                           {{HIGHLIGHTS_HTML}}
+                        </span>
+                    </center>
+                </span>
+               
+              {{CONFIG_HEADING_BLOCK}}
+              <span class="pro-price mb-1">
+                               <span class="pro-title" style="font-size:15px">Starting Price:</span>
+                    <span class="color-primary roboto-bold" style="font-weight: bolder;"><i class="mi mi-rs-light info-icon"></i>{{PRICE_RANGE}}</span>
+
+                </span>
+                <button
+                    class="btn btn-info micro-form-btn enqModal effetMoveGradient effectScale mb-1"
+                    data-form="lg"
+                    data-title="Get More Details"
+                    data-btn="Send now"
+                    data-enquiry="Enquire Now"
+                    data-redirect="enquiry"
+                    data-toggle="modal"
+                    data-target="#enqModal"
+                >
+                    Enquire Now
+                </button>
+               
+            </div>
+            <div class="mob-form d-sm-block d-md-none d-lg-none">
+                <span class="d-block form-heading font-weight-bold">Register Here for Best Offer</span>
+                <div class="banner-form"></div>
+            </div>
+           
+        <!--SECTION:PRICE_START-->
+        <section class="section shadow-sm lazyloaded">
+                <span class="section-link" id="pricing"></span> <span class="head text-capitalize">Tentative Price</span>
+                {{CONFIG_HEADING_SUB}}
+                <div class="row">
+                    <div class="col-md-8">
+                        <table class="table table-striped table-borderless border micro-price-table table-pricing">
+                     <thead>
+                        <tr>
+                           <th scope="col" class="border border-bottom-0 mb-w">Type</th>
+                           <th scope="col" class="border border-bottom-0 mb-w">Area</th>
+                           <th scope="col" class="border border-bottom-0 border-right-0">Price</th>
+                           <th scope="col"></th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        {{PRICE_TABLE_ROWS}}
+                     </tbody>
+                  </table>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="#" class="text-decoration-none enqModal" data-form="lg" data-title="Send me costing details" data-btn="Send now" data-enquiry="Costing Details" data-toggle="modal" data-target="#enqModal">
+                            <div class="at-property-item shadow-sm border border-grey mt-1">
+                                <div class="at-property-img lazyloaded" data-expand="-1">
+                                    <picture>
+                                        <source class=" w-100 lazyloading" data-srcset="assets/img/comman/sample/costing-details-320w.webp" type="image/webp" srcset="assets/img/comman/sample/costing-details-320w.webp" sizes="288px">
+                                        <img data-sizes="auto" class="w-100 lazyautosizes lazyloaded" data-srcset="assets/img/comman/sample/costing-details-320w.jpg" sizes="288px" srcset="assets/img/comman/sample/costing-details-320w.jpg">
+                                    </picture>
+                                    <div class="at-property-overlayer"></div>
+                                    <span class="btn btn-default at-property-btn">Enquire Now</span>
+                                </div>
+                                <div class="at-property-dis effetGradient"><h5>Complete Costing Details</h5></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+            <!--SECTION:PRICE_END-->
+            <!--SECTION:FLOORPLAN_START-->
+            <section class="section shadow-sm lazyload">
+                <span class="section-link" id="sitefloorplan"></span> <span class="head text-capitalize">Site &amp; Floor Plan</span> <span class="d-block section-heading-sub text-capitalize">Master Plan</span>
+               {{MASTERPLAN_LINK_OPEN}}
+                    <div class="at-property-item mt-1">
+                        <div class="at-property-img master-plan text-center">
+                            <picture>
+                                <source class="lazyload shadow-sm border border-grey" data-srcset="assets/img/masterplan.jpg" style="filter: blur(4px);" type="image/webp" />
+                                <img data-sizes="auto" class="lazyload shadow-sm border border-grey" data-srcset="assets/master-plan.jpg" style="filter: blur(4px);" />
+                            </picture>
+                            <div class="at-property-overlayer"></div>
+                            <span class="at-property-btn">{{MASTERPLAN_BTN_TEXT}}</span>
+                        </div>
+                    </div>
+                {{MASTERPLAN_LINK_CLOSE}}
+                <span class="d-block section-heading-sub text-capitalize mt-3">Floor Plan</span>
+                {{FLOORPLAN_SECTION}}
+            </section>
+            <!--SECTION:FLOORPLAN_END-->
+            <section class="section shadow-sm lazyload">
+                <span class="section-link" id="amenities"></span> <span class="head text-capitalize">Amenities</span>
+                <style>
+                    .location-adv-list {
+                        list-style: none;
+                        padding: 0;
+                        margin: 12px 0 0;
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                        gap: 8px 20px;
+                    }
+                    .location-adv-list li {
+                        position: relative;
+                        padding-left: 22px;
+                        font-size: 14px;
+                        line-height: 1.5;
+                    }
+                    .location-adv-list li::before {
+                        content: "\2713";
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        color: var(--colorPrimary);
+                        font-weight: bold;
+                    }
+                    .ami-block-bg {
+                        background: var(--colorCard);
+                        background-position: center right;
+                        background-size: cover;
+                        border-radius: 1vw;
+                        overflow: hidden;
+                        margin: 10px 0;
+                    }
+                    .ami-block-link {
+                        display: block;
+                        cursor: pointer;
+                    }
+                    .ami-block-bg .ami-block-bg-overlay {
+                        background-color: transparent;
+                        background-image: linear-gradient(0deg, var(--colorOverlay) 0%, var(--colorOverlay) 10%, transparent 100%);
+                        opacity: 0.9;
+                        height: 180px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: flex-end;
+                        padding: 20px;
+                        transition: background 0.3s, border-radius 0.3s, opacity 0.3s;
+                    }
+                    .ami-block-bg .ami-block-bg-overlay .ami-bg-name {
+                        display: flex;
+                        flex-direction: column;
+                        color: var(--colorBtn);
+                        font-weight: bold;
+                        font-size: 15px;
+                        letter-spacing: 1px;
+                        border-left: 4px solid var(--colorPrimary);
+                        padding-left: 5px;
+                    }
+                    @media only screen and (min-width: 992px) {
+                        .ami-block-bg {
+                        }
+                        .ami-block-bg .ami-block-bg-overlay {
+                            height: 15vw;
+                        }
+                        .ami-block-bg .ami-block-bg-overlay .ami-bg-name {
+                            font-size: 1vw;
+                            letter-spacing: 0.1vw;
+                            padding-left: 0.5vw;
+                        }
+                    }
+                </style>
+                <div id="ami-4" class="ami-4 owl-carousel owl-theme">
+                    {{AMENITY_ITEMS}}
+                </div>
+            </section>
+            <!--SECTION:GALLERY_START-->
+            <section class="section shadow-sm lazyload" id="gallery">
+                <span class="section-link"></span> <div class="row">
+                    
+                        <h2 class="head text-capitalize">Gallery </h2>
+                    
+                    
+                </div>
+            
+               {{GALLERY_SECTION}}
+                </div>
+                <div class="col-12">
+                    <p></p>
+                        <button class="btn btn-info micro-form-btn enqModal effetMoveGradient effectScale float-lg-right mx-sm-auto d-lg-none" data-form="lg" data-title="Download Gallery" data-btn="Send Now" data-enquiry="Download Gallery" data-redirect="floorplan" data-toggle="modal" data-target="#enqModal">Download Gallery</button>
+                    </div>
+            
+                
+            </section>
+            <!--SECTION:GALLERY_END-->
+            <!--SECTION:LOCATION_START-->
+            <section class="section shadow-sm lazyload" data-script="./assets/plugins/fancybox/jquery.fancybox.min.js" data-link="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+                <span class="section-link" id="location"></span> <span class="head text-capitalize">Location</span>
+                <div class="row mb-3">
+                    <div class="col-sm-12">
+                        <span class="d-block section-heading-sub text-capitalize">Map View</span>
+                     <iframe src="{{MAP_IFRAME_SRC}}" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                     {{LOCATION_ADV_HTML}}
+                </div>
+                <p></p>
+            </section>
+            <!--SECTION:LOCATION_END-->
+           
+            <!--SECTION:DEVELOPER_START-->
+            <section class="section shadow-sm lazyload" id="developer">
+                {{ABOUT_BUILDER_HTML}}
+            </section>
+            <!--SECTION:DEVELOPER_END-->
+            <div class="micro-side text-center">
+                <div class="og-section pb-2">
+
+               <button class="btn btn-sm btn-info micro-form-btn-sm effetGradient effectScale enqModal mt-1" onclick="javascript:location.href='{{PHONE_TEL}}'"><span class="mi mi-call action-icon"></span> Call Now: {{PHONE_DISPLAY}}</button> 
+            </div>
+                <span class="d-block form-heading font-weight-bold my-2">Register Here for Best Offer</span>
+                <div class="banner-form"></div>
+            </div>
+            <ul class="mob-action nav nav-fill d-sm-block d-lg-none">
+                <li class="nav-item" onclick="javascript:location.href='{{PHONE_TEL}}'"><span class="mi mi-call action-icon"></span> Call</li>
+                <li class="nav-item enqModal" data-form="lg" data-title="Get More Details" data-btn="Send now" data-enquiry="Enquire Now" data-redirect="enquiry" data-toggle="modal" data-target="#enqModal">
+                    <span class="mi mi-enquire action-icon"></span> Enquire
+                </li>
+              
+            </ul>
+            <div class="modal fade" id="enqModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered enq-modal" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body text-center">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <div class="modal-head d-none"><span class="modal-title">Title</span></div>
+                            <div class="d-flex">
+                                <div class="flex-fill align-self-center flex-shrink-1 modal-highlight-bg d-none d-lg-block">
+                                    <span class="modal-highlight-title">We Promise</span>
+                                    <ul class="modal-highlight">
+                                        <li><i class="mi mi-support-call"></i><span>Instant Call Back</span></li>
+                                        <li><i class="mi mi-support-visit"></i><span>Free Site Visit</span></li>
+                                        <li><i class="mi mi-support-price"></i><span>Unmatched Price</span></li>
+                                    </ul>
+                                </div>
+                                <div class="flex-fill align-self-center">
+                                    <img src="assets/logo.png
+" class="modal-logo" /> <span class="modal-title-secondary">Register here and Avail the <span class="text-danger">Best Offers!!</span></span>
+                                   <div class="banner-form"></div>
+                                </div>
+                            </div>
+                            <a href="{{PHONE_TEL}}" class="modal-call-btn"><i class="mi mi-call"></i> {{PHONE_DISPLAY}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+<footer class="disclaimer"> 
+<div class="row"> 
+{{DISCLAIMER_BLOCK}}
+</div></footer>
+        <div class="simple-lightbox-overlay" id="simpleLightbox">
+            <button type="button" class="simple-lightbox-close" id="simpleLightboxClose" aria-label="Close">&times;</button>
+            <button type="button" class="simple-lightbox-prev" id="simpleLightboxPrev" aria-label="Previous">&#8249;</button>
+            <img id="simpleLightboxImg" src="" alt="" />
+            <button type="button" class="simple-lightbox-next" id="simpleLightboxNext" aria-label="Next">&#8250;</button>
+        </div>
+        <script>
+            /* Self-contained lightbox for Gallery / Floor Plan "click to view" — plain JS,
+               no jQuery or 3rd-party plugin dependency, so it always works regardless of
+               whether other libraries have finished loading. */
+            (function () {
+                var overlay  = document.getElementById('simpleLightbox');
+                var imgEl    = document.getElementById('simpleLightboxImg');
+                var closeBtn = document.getElementById('simpleLightboxClose');
+                var prevBtn  = document.getElementById('simpleLightboxPrev');
+                var nextBtn  = document.getElementById('simpleLightboxNext');
+                var group = [];
+                var index = 0;
+
+                function openAt(i) {
+                    if (!group.length) return;
+                    index = (i + group.length) % group.length;
+                    imgEl.src = group[index].getAttribute('href');
+                    overlay.classList.add('active');
+                }
+                function close() {
+                    overlay.classList.remove('active');
+                    imgEl.src = '';
+                }
+                document.addEventListener('click', function (e) {
+                    var trigger = e.target.closest ? e.target.closest('.js-lightbox') : null;
+                    if (!trigger) return;
+                    e.preventDefault();
+                    var groupName = trigger.getAttribute('data-lightbox-group') || 'default';
+                    group = Array.prototype.slice.call(document.querySelectorAll('.js-lightbox[data-lightbox-group="' + groupName + '"]'));
+                    openAt(group.indexOf(trigger));
+                });
+                closeBtn.addEventListener('click', close);
+                overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+                prevBtn.addEventListener('click', function () { openAt(index - 1); });
+                nextBtn.addEventListener('click', function () { openAt(index + 1); });
+                document.addEventListener('keydown', function (e) {
+                    if (!overlay.classList.contains('active')) return;
+                    if (e.key === 'Escape') close();
+                    if (e.key === 'ArrowLeft') openAt(index - 1);
+                    if (e.key === 'ArrowRight') openAt(index + 1);
+                });
+            })();
+        </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function (event) {
+                document.getElementById("loader").remove();
+                document.querySelector("header").classList.remove("pload");
+                document.querySelector("main").classList.remove("pload");
+                document.querySelector("footer").classList.remove("pload");
+
+                // Init the adaptive gallery/floor-plan sliders here (not at parse time) —
+                // app.js (which bundles jQuery + owlCarousel) loads with `defer`, so it is only
+                // guaranteed to be ready once DOMContentLoaded fires.
+                if (window.jQuery) {
+                    jQuery(function ($) {
+                        $('.gallery-slider').owlCarousel({ autoplay: true, lazyLoad: true, loop: false, rewind: true, margin: 12, responsiveClass: true, smartSpeed: 800, nav: true, dots: false, responsive: { 0: { items: 1 }, 600: { items: 2 }, 1000: { items: 3 } } });
+                        $('.floorplan-slider').owlCarousel({ autoplay: true, lazyLoad: true, loop: false, rewind: true, margin: 12, responsiveClass: true, smartSpeed: 800, nav: true, dots: false, responsive: { 0: { items: 1 }, 600: { items: 2 }, 1000: { items: 3 } } });
+                    });
+                }
+            });
+            var sitePrimaryColor = "{{COLOR_PRIMARY}}";
+        </script>
+        
+   <script src="assets/js/jquery.nice-select.min.js"></script>
+    <script>
+ function getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    var num1 = getRandomInt(1, 99),
+      num2 = getRandomInt(1, 9),
+      total = num1 + num2;
+    
+    var cap_html = `
+        <div class="col-sm-8">
+            <div style="font-size: 20px;font-family:'Press Start 2P';padding-top: 10px;" >
+                <span>${num1}</span> + <span>${num2}</span> =
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <input type="hidden" name="token" class="token" />
+            <input class="form-control" required onkeyup="generateToken(event)"/>
+        </div>
+    `;
+    
+    function generateToken(event) {
+      console.log(event);
+      $(".token").val(btoa(`${num1}__s__${num2}__s__${event.target.value}`));
+    }
+    
+    let _html = `
+    <form action="crm_connect.php" method="POST">
+        <div class="form-group">
+            <input required type="text" placeholder="Full Name" name="name" class="form-control">
+         </div>
+         <div class="form-group">
+            <input required type="text" placeholder="Type your phone number" name="phone" class="form-control">
+         </div>
+         <div class="form-group">
+            <input required type="email" placeholder="Type your email" name="email" class="form-control">
+         </div>
+         <div class="form-group">
+            <textarea placeholder="Type your message" name="message" class="form-control"></textarea>
+         </div>
+           <div class="form-group row">
+            ${cap_html}
+         </div>
+         <div class="form-group">
+            <button type="submit" class="_submit btn effetMoveGradient effectScale btn-block" >Submit</button>
+         </div>
+    </form>
+    `;
+    
+    setTimeout(function() {
+        $('.banner-form').html(_html);
+    }, 1000)
+</script>
+    </body>
+</html>
+<script>
+    var countryCode = "IN";
+</script>

@@ -14,6 +14,8 @@
 
 header('Content-Type: application/json');
 
+require_once __DIR__ . '/core/ThemeLoader.php';
+
 // ---- CORS: allow the web app (hosted elsewhere) to call this ----
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -51,6 +53,8 @@ $ccEmail     = trim($_POST['ccEmail'] ?? '');
 $bccEmail    = trim($_POST['bccEmail'] ?? '');
 $mapLink     = trim($_POST['mapLink'] ?? '');
 $refNumber   = trim($_POST['refNumber'] ?? ('REQ-' . time()));
+$themeId     = trim($_POST['theme'] ?? 'default');
+$theme       = loadTheme($themeId);
 
 // New: configurations heading (shown near price / above the pricing table)
 $configHeading = trim($_POST['configHeading'] ?? '');
@@ -98,11 +102,14 @@ function sanitizeColor($val, $default) {
     $val = trim((string) $val);
     return preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $val) ? $val : $default;
 }
-$colorPrimary   = sanitizeColor($_POST['colorPrimary'] ?? '', '#8a691c');
-$colorSecondary = sanitizeColor($_POST['colorSecondary'] ?? '', '#3D3D3D');
-$colorBtn       = sanitizeColor($_POST['colorBtn'] ?? '', '#ffffff');
-$colorCard      = sanitizeColor($_POST['colorCard'] ?? '', '#eae5e4');
-$colorOverlay   = sanitizeColor($_POST['colorOverlay'] ?? '', '#1a1a1a');
+$themeColorDefaults = $theme['styles']['colors'];
+$colors = [
+    'primary' => sanitizeColor($_POST['colorPrimary'] ?? '', $themeColorDefaults['primary']),
+    'secondary' => sanitizeColor($_POST['colorSecondary'] ?? '', $themeColorDefaults['secondary']),
+    'button' => sanitizeColor($_POST['colorBtn'] ?? '', $themeColorDefaults['button']),
+    'card' => sanitizeColor($_POST['colorCard'] ?? '', $themeColorDefaults['card']),
+    'overlay' => sanitizeColor($_POST['colorOverlay'] ?? '', $themeColorDefaults['overlay']),
+];
 
 if ($projectName === '' || $address === '' || $phone === '' || $toEmail === '' || $priceRange === '') {
     fail('Missing required fields.');
@@ -271,36 +278,6 @@ function e($str) {
     return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
 }
 
-// Highlights -> "line<br>line<br>line"
-$highlightsHtml = implode('<br>', array_map('e', array_filter($highlights)));
-
-// Location Advantages -> bulleted list shown below the map, only if any were given
-$locationAdvItems = array_filter(array_map('trim', $locationAdvantages));
-if (count($locationAdvItems) > 0) {
-    $locationAdvHtml = "<div class=\"location-adv-block mt-3\">\n";
-    $locationAdvHtml .= "    <span class=\"d-block section-heading-sub text-capitalize\">Location Advantages</span>\n";
-    $locationAdvHtml .= "    <ul class=\"location-adv-list\">\n";
-    foreach ($locationAdvItems as $adv) {
-        $locationAdvHtml .= "        <li>" . e($adv) . "</li>\n";
-    }
-    $locationAdvHtml .= "    </ul>\n</div>\n";
-} else {
-    $locationAdvHtml = '';
-}
-
-// About Builder -> nav tab + section body, only included when text was provided
-$aboutBuilderHtml = '';
-if ($includeDeveloper) {
-    $headingText = $aboutBuilderHeading !== '' ? $aboutBuilderHeading : 'About the Builder';
-    $aboutBuilderHtml = '<span class="d-block section-heading-sub text-capitalize">' . e($headingText) . '</span>'
-        . "\n<p>" . nl2br(e($aboutBuilderText)) . '</p>';
-}
-
-// Google gtag.js + Google Ads conversion tracking — both fields optional.
-// If only the conversion "send_to" ID is given, its AW- prefix (the part
-// before the "/") is reused as the gtag.js load/config ID so one field is
-// enough for the common case. Leaving both blank ships zero tracking code
-// (previously a stray hardcoded Google Ads ID was baked into every page).
 function buildGtagSnippet($gtagId, $conversionSendTo, $fireConversion) {
     $loadId = $gtagId;
     if ($loadId === '' && $conversionSendTo !== '') {
@@ -323,303 +300,71 @@ function buildGtagSnippet($gtagId, $conversionSendTo, $fireConversion) {
     $snippet .= "</script>\n";
     return $snippet;
 }
-$gtagHeadSnippet   = buildGtagSnippet($gtagId, $conversionSendTo, false); // index.html: page tracking only
-$thanksGtagSnippet = buildGtagSnippet($gtagId, $conversionSendTo, true);  // thanks.html: fires the conversion too
 
+function toEmbedSrc($mapLink) {
+    $mapLink = trim($mapLink);
+    if ($mapLink === '') return 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.0!2d77.7!3d12.97!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sIndia!5e0!3m2!1sen!2sin';
+    if (stripos($mapLink, '<iframe') !== false && preg_match('/src=["\']([^"\']+)["\']/i', $mapLink, $m)) return html_entity_decode($m[1]);
+    if (strpos($mapLink, 'google.com/maps/embed') !== false) return $mapLink;
+    if (preg_match('#^https?://#i', $mapLink)) {
+        if (preg_match('#/maps/place/([^/@]+)#i', $mapLink, $m)) return 'https://www.google.com/maps?q=' . urlencode(urldecode(str_replace('+', ' ', $m[1]))) . '&output=embed';
+        if (preg_match('#[@,]\s*(-?\d{1,3}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)#', $mapLink, $m)) return 'https://www.google.com/maps?q=' . urlencode($m[1] . ',' . $m[2]) . '&output=embed';
+        if (preg_match('#[?&]q=([^&]+)#i', $mapLink, $m)) return 'https://www.google.com/maps?q=' . $m[1] . '&output=embed';
+        return 'https://www.google.com/maps?q=' . urlencode($mapLink) . '&output=embed';
+    }
+    return 'https://www.google.com/maps?q=' . urlencode($mapLink) . '&output=embed';
+}
+
+$gtagHeadSnippet   = buildGtagSnippet($gtagId, $conversionSendTo, false);
+$thanksGtagSnippet = buildGtagSnippet($gtagId, $conversionSendTo, true);
 $thanksTemplate = file_get_contents($templatesDir . '/thanks.html');
 $thanksHtml = strtr($thanksTemplate, ['{{GTAG_HEAD_SNIPPET}}' => $thanksGtagSnippet]);
 file_put_contents($workDir . '/thanks.html', $thanksHtml);
 
-// Price table rows
-$priceTableRows = '';
-foreach ($priceRows as $row) {
-    $type  = e($row['type'] ?? '');
-    $area  = e($row['area'] ?? '');
-    $price = e($row['price'] ?? '');
-    if ($type === '' && $area === '' && $price === '') continue;
-    $priceTableRows .= <<<HTML
-                        <tr>
-                           <td class="border border-left-0 border-top-0 border-bottom-0 price-type">{$type}</td>
-                           <td class="border border-left-0 border-top-0 border-bottom-0 price-carpet">{$area}</td>
-                           <td class="price-amt"><i class="mi mi-rs-light"></i> {$price}</td>
-                           <td><button class="btn btn-sm btn-info effetGradient effectScale enqModal" data-form="lg" data-title="Send me costing details" data-btn="Send now" data-enquiry="Request Price" data-redirect="floorplan" data-toggle="modal" data-target="#enqModal">Price Breakup</button></td>
-                        </tr>
-
-HTML;
-}
-
-// Slider indicators + carousel items (unlimited, built from the uploaded slider[] list)
-$sliderIndicators = '';
-$sliderItems = '';
-foreach ($sliderFiles as $idx => $file) {
-    $activeLi   = $idx === 0 ? ' class="active"' : '';
-    $activeItem = $idx === 0 ? ' active' : '';
-    $sliderIndicators .= "<li data-target=\"#home\" data-slide-to=\"{$idx}\"{$activeLi}></li>\n                    ";
-    $sliderItems .= <<<HTML
-                    <div class="carousel-item{$activeItem}">
-                        <picture>
-                            <source class="lazyload d-block micro-main-slider-img" media="(max-width: 750px)" data-srcset="assets/img/{$file}" type="image/webp" />
-                            <source class="lazyload d-block micro-main-slider-img" media="(min-width: 751px)" data-srcset="assets/img/{$file}" type="image/webp" />
-                            <img data-sizes="auto" class="lazyload d-block micro-main-slider-img" data-srcset="assets/img/{$file}" />
-                        </picture>
-                    </div>
-
-HTML;
-}
-
-// Floor-plan section (unlimited, one card per uploaded floor plan image + its own label)
-// - 1 to 3 images: responsive grid (columns adjust to the count)
-// - 4+ images: automatically becomes an owl-carousel slider
-// - $floorplanLightbox controls whether clicking opens a lightbox image or the Enquiry modal
-function buildFloorplanSection($entries, $lightbox) {
-    $count = count($entries);
-    if ($count === 0) return '';
-
-    $card = function ($entry, $lightbox) {
-        $img   = $entry['file'];
-        $label = e($entry['label'] !== '' ? $entry['label'] : 'Floor Plan');
-        if ($lightbox) {
-            return <<<HTML
-                        <a href="assets/img/{$img}" class="js-lightbox text-decoration-none" data-lightbox-group="floorplan-gallery">
-                            <div class="at-property-item shadow-sm border border-grey mt-1">
-                                <div class="at-property-img">
-                                    <picture>
-                                        <source class="lazyload floor-plan-img blur" data-srcset="assets/img/{$img}" type="image/webp" />
-                                        <img data-sizes="auto" class="lazyload floor-plan-img blur" data-srcset="assets/img/{$img}" />
-                                    </picture>
-                                    <div class="at-property-overlayer"></div>
-                                    <span class="btn btn-default at-property-btn" role="button">View Plan</span>
-                                </div>
-                                <div class="at-property-dis effetGradient"><h5>{$label}</h5></div>
-                            </div>
-                        </a>
-
-HTML;
-        }
-        return <<<HTML
-                        <a href="#" class="text-decoration-none enqModal" data-form="lg" data-title="Send me plan details" data-btn="Send now" data-enquiry="Floor Plan" data-redirect="floorplan" data-toggle="modal" data-target="#enqModal">
-                            <div class="at-property-item shadow-sm border border-grey mt-1">
-                                <div class="at-property-img">
-                                    <picture>
-                                        <source class="lazyload floor-plan-img blur" data-srcset="assets/img/{$img}" type="image/webp" />
-                                        <img data-sizes="auto" class="lazyload floor-plan-img blur" data-srcset="assets/img/{$img}" />
-                                    </picture>
-                                    <div class="at-property-overlayer"></div>
-                                    <span class="btn btn-default at-property-btn" role="button">Enquire Now</span>
-                                </div>
-                                <div class="at-property-dis effetGradient"><h5>{$label}</h5></div>
-                            </div>
-                        </a>
-
-HTML;
-    };
-
-    if ($count <= 3) {
-        $cols = intdiv(12, $count);
-        $html = "<div class=\"row row-cols-1 row-cols-md-{$count}\">\n";
-        foreach ($entries as $entry) {
-            $html .= "                    <div class=\"col\">\n" . $card($entry, $lightbox) . "                    </div>\n\n";
-        }
-        $html .= "                </div>\n";
-        return $html;
-    }
-
-    // 4+ images -> slider
-    $html = "<div class=\"floorplan-slider owl-carousel owl-theme\">\n";
-    foreach ($entries as $entry) {
-        $html .= "                    <div class=\"item\">\n" . $card($entry, $lightbox) . "                    </div>\n\n";
-    }
-    $html .= "                </div>\n";
-    return $html;
-}
-
-// Gallery section (unlimited, only includes photos that were actually uploaded)
-// - 1 to 3 images: responsive grid (columns adjust to the count)
-// - 4+ images: automatically becomes an owl-carousel slider
-// - $galleryLightbox controls whether clicking opens a lightbox image or the Enquiry modal
-function buildGallerySection($entries, $lightbox) {
-    $count = count($entries);
-    if ($count === 0) return '';
-
-    $card = function ($entry, $lightbox) {
-        $img     = $entry['file'];
-        $caption = e($entry['label'] !== '' ? $entry['label'] : 'Gallery Photo');
-        if ($lightbox) {
-            return <<<HTML
-                        <a href="assets/img/{$img}" class="js-lightbox" data-lightbox-group="gallery-0"> <img data-src="./assets/img/{$img}" loading="lazy" class="lazyload gallery-thumb" alt="{$caption}"> </a>
-
-HTML;
-        }
-        return <<<HTML
-                        <a href="#" class="enqModal" data-form="lg" data-title="Send me this photo" data-btn="Send now" data-enquiry="Gallery Photo" data-toggle="modal" data-target="#enqModal"> <img data-src="./assets/img/{$img}" loading="lazy" class="lazyload gallery-thumb" alt="{$caption}"> </a>
-
-HTML;
-    };
-
-    if ($count <= 3) {
-        $colClass = $count === 1 ? 'col-lg-6 col-md-6 col-sm-8 col-8' : ($count === 2 ? 'col-lg-6 col-md-6 col-sm-6 col-6' : 'col-lg-4 col-md-4 col-sm-6 col-6');
-        $html = "<div class=\"row\">\n";
-        foreach ($entries as $entry) {
-            $html .= "                    <div class=\"{$colClass} mb-2\">\n" . $card($entry, $lightbox) . "                    </div>\n\n";
-        }
-        $html .= "                </div>\n";
-        return $html;
-    }
-
-    // 4+ images -> slider
-    $html = "<div class=\"gallery-slider owl-carousel owl-theme\">\n";
-    foreach ($entries as $entry) {
-        $html .= "                    <div class=\"item\">\n" . $card($entry, $lightbox) . "                    </div>\n\n";
-    }
-    $html .= "                </div>\n";
-    return $html;
-}
-
-// Master Plan click behaviour — same "Click to View" / "Enquiry Button" pattern as Floor Plan.
-// $masterplanLightbox controls whether clicking the master plan image opens a lightbox popup
-// or the existing Enquiry modal (default, unchanged behaviour).
-if ($masterplanLightbox) {
-    $masterplanLinkOpen  = '<a href="assets/img/masterplan.jpg" class="js-lightbox text-decoration-none" data-lightbox-group="masterplan-gallery">';
-    $masterplanBtnText   = 'View Master Plan';
-} else {
-    $masterplanLinkOpen  = '<a href="#" class="text-decoration-none enqModal" data-form="lg" data-title="Send me costing details" data-btn="Send now" data-enquiry="Plan Details" data-toggle="modal" data-target="#enqModal">';
-    $masterplanBtnText   = 'Enquire Now';
-}
-$masterplanLinkClose = '</a>';
-
-$floorplanSection = buildFloorplanSection($floorplanEntries, $floorplanLightbox);
-$gallerySection   = buildGallerySection($galleryEntries, $galleryLightbox);
-
-// Amenity items (unlimited, image + name pairs, grouped 2-per-row to match the template layout)
-// - $amenityLightbox controls whether clicking opens a lightbox image or the Enquiry modal
-//   (same "Click to View" / "Enquiry Button" behaviour as the Floor Plan section)
-$amenityItems = '';
-foreach (array_chunk($amenityEntries, 2) as $chunk) {
-    $amenityItems .= "                    <div class=\"item-wrp\">\n";
-    foreach ($chunk as $entry) {
-        $img   = $entry['file'];
-        $label = e($entry['label'] !== '' ? $entry['label'] : 'Amenity');
-        if ($amenityLightbox) {
-            $amenityItems .= <<<HTML
-                        <a href="assets/img/{$img}" class="js-lightbox ami-block-link" data-lightbox-group="amenity-gallery">
-                            <div class="ami-block-bg" style="background-image: url(assets/img/{$img});">
-                                <div class="ami-block-bg-overlay"><div class="ami-bg-name">{$label}</div></div>
-                            </div>
-                        </a>
-
-HTML;
-        } else {
-            $amenityItems .= <<<HTML
-                        <a href="#" class="ami-block-link enqModal" data-form="lg" data-title="Send me amenity details" data-btn="Send now" data-enquiry="Amenity" data-redirect="floorplan" data-toggle="modal" data-target="#enqModal">
-                            <div class="ami-block-bg" style="background-image: url(assets/img/{$img});">
-                                <div class="ami-block-bg-overlay"><div class="ami-bg-name">{$label}</div></div>
-                            </div>
-                        </a>
-
-HTML;
-        }
-    }
-    $amenityItems .= "                    </div>\n";
-}
-
-// Google Maps embed src — turns whatever the user pasted (the "Embed a map"
-// iframe code, a plain share link, a coordinates link, or a plain address)
-// into an actual iframe-embeddable URL. Google's regular "share" links
-// (maps.app.goo.gl/... or /maps/place/...@lat,lng URLs) are NOT embeddable
-// as-is — Google blocks them from being framed — so we pull the useful part
-// (place name or lat/lng) out of them and build a proper `output=embed` URL.
-function toEmbedSrc($mapLink) {
-    $mapLink = trim($mapLink);
-    if ($mapLink === '') {
-        return 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.0!2d77.7!3d12.97!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sIndia!5e0!3m2!1sen!2sin';
-    }
-
-    // 1) User pasted the full <iframe ...> code from "Share > Embed a map"
-    //    — pull the real embeddable src straight out of it.
-    if (stripos($mapLink, '<iframe') !== false && preg_match('/src=["\']([^"\']+)["\']/i', $mapLink, $m)) {
-        return html_entity_decode($m[1]);
-    }
-
-    // 2) Already an embeddable Maps URL (e.g. the src copied directly).
-    if (strpos($mapLink, 'google.com/maps/embed') !== false) {
-        return $mapLink;
-    }
-
-    // 3) A normal Google Maps "share" link (place/search page or a
-    //    maps.app.goo.gl short link) — these can't be framed directly,
-    //    so extract the place name or coordinates and build an embed URL.
-    if (preg_match('#^https?://#i', $mapLink)) {
-        if (preg_match('#/maps/place/([^/@]+)#i', $mapLink, $m)) {
-            return 'https://www.google.com/maps?q=' . urlencode(urldecode(str_replace('+', ' ', $m[1]))) . '&output=embed';
-        }
-        if (preg_match('#[@,]\s*(-?\d{1,3}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)#', $mapLink, $m)) {
-            return 'https://www.google.com/maps?q=' . urlencode($m[1] . ',' . $m[2]) . '&output=embed';
-        }
-        if (preg_match('#[?&]q=([^&]+)#i', $mapLink, $m)) {
-            return 'https://www.google.com/maps?q=' . $m[1] . '&output=embed';
-        }
-        // Shortened link we can't parse locally (e.g. maps.app.goo.gl/xxxx) —
-        // best effort: let Google's embed endpoint try to resolve it directly.
-        return 'https://www.google.com/maps?q=' . urlencode($mapLink) . '&output=embed';
-    }
-
-    // 4) Plain address / place name text.
-    return 'https://www.google.com/maps?q=' . urlencode($mapLink) . '&output=embed';
-}
-// Configurations heading (e.g. "Premium 3/4/5 BHK Apartments") — shown above the price in the
-// hero box, and repeated as a sub-heading in the pricing table section, if provided.
-$configHeadingBlock = '';
-$configHeadingSub   = '';
-if ($configHeading !== '') {
-    $configHeadingBlock = '<span class="d-block pro-title text-capitalize" style="font-size:14px;font-weight:700;">' . e($configHeading) . '</span>';
-    $configHeadingSub   = '<span class="d-block section-heading-sub text-capitalize">' . e($configHeading) . '</span>';
-}
 $mapEmbedSrc = toEmbedSrc($mapLink);
-
-// Phone formatting
 $phoneDisplay = $phone;
 $phoneDigits  = preg_replace('/[^0-9+]/', '', $phone);
 $phoneTel     = 'tel:' . $phoneDigits;
 
+// Theme renderer context: the generator prepares validated, theme-neutral data,
+// then the selected theme converts it into the tokens required by its templates.
+$themeContext = [
+    'projectName' => $projectName,
+    'statusBadge' => $statusBadge,
+    'priceRange' => $priceRange,
+    'address' => $address,
+    'landArea' => $landArea,
+    'totalUnits' => $totalUnits,
+    'floors' => $floors,
+    'configHeading' => $configHeading,
+    'highlights' => $highlights,
+    'locationAdvantages' => $locationAdvantages,
+    'priceRows' => $priceRows,
+    'sliderFiles' => $sliderFiles,
+    'floorplanEntries' => $floorplanEntries,
+    'galleryEntries' => $galleryEntries,
+    'amenityEntries' => $amenityEntries,
+    'floorplanLightbox' => $floorplanLightbox,
+    'amenityLightbox' => $amenityLightbox,
+    'galleryLightbox' => $galleryLightbox,
+    'masterplanLightbox' => $masterplanLightbox,
+    'aboutBuilderHeading' => $aboutBuilderHeading,
+    'aboutBuilderText' => $aboutBuilderText,
+    'includeDeveloper' => $includeDeveloper,
+    'gtagHeadSnippet' => $gtagHeadSnippet,
+    'mapEmbedSrc' => $mapEmbedSrc,
+    'phoneDisplay' => $phoneDisplay,
+    'phoneTel' => $phoneTel,
+    'colors' => $colors,
+    'disclaimerBlock' => $disclaimerBlock,
+];
+$tokens = call_user_func($theme['renderer'], $themeContext);
+
 // ---------------------------------------------------------
 // 6. Fill index.html
 // ---------------------------------------------------------
-$indexTemplate = file_get_contents($templatesDir . '/index-template.html');
+$indexTemplate = file_get_contents($theme['paths']['indexTemplate']);
 
-$tokens = [
-    '{{PAGE_TITLE}}'          => e("BOOK NOW - {$projectName} - {$address}"),
-    '{{STATUS_BADGE}}'        => e($statusBadge),
-    '{{PROJECT_NAME}}'        => e($projectName),
-    '{{ADDRESS}}'             => e($address),
-    '{{LAND_AREA}}'           => e($landArea),
-    '{{TOTAL_UNITS}}'         => e($totalUnits),
-    '{{FLOORS}}'              => e($floors),
-    '{{HIGHLIGHTS_HTML}}'     => $highlightsHtml,
-    '{{CONFIG_HEADING_BLOCK}}'=> $configHeadingBlock,
-    '{{CONFIG_HEADING_SUB}}'  => $configHeadingSub,
-    '{{PRICE_RANGE}}'         => e($priceRange),
-    '{{PRICE_TABLE_ROWS}}'    => $priceTableRows,
-    '{{SLIDER_INDICATORS}}'   => $sliderIndicators,
-    '{{SLIDER_ITEMS}}'        => $sliderItems,
-    '{{FLOORPLAN_SECTION}}'   => $floorplanSection,
-    '{{MASTERPLAN_LINK_OPEN}}'  => $masterplanLinkOpen,
-    '{{MASTERPLAN_LINK_CLOSE}}' => $masterplanLinkClose,
-    '{{MASTERPLAN_BTN_TEXT}}'   => e($masterplanBtnText),
-    '{{GALLERY_SECTION}}'     => $gallerySection,
-    '{{AMENITY_ITEMS}}'       => $amenityItems,
-    '{{MAP_IFRAME_SRC}}'      => $mapEmbedSrc,
-    '{{LOCATION_ADV_HTML}}'   => $locationAdvHtml,
-    '{{ABOUT_BUILDER_HTML}}'  => $aboutBuilderHtml,
-    '{{GTAG_HEAD_SNIPPET}}'   => $gtagHeadSnippet,
-    '{{PHONE_TEL}}'           => $phoneTel,
-    '{{PHONE_DISPLAY}}'       => e($phoneDisplay),
-    '{{COLOR_PRIMARY}}'       => $colorPrimary,
-    '{{COLOR_SECONDARY}}'     => $colorSecondary,
-    '{{COLOR_BTN}}'           => $colorBtn,
-    '{{COLOR_CARD}}'          => $colorCard,
-    '{{COLOR_OVERLAY}}'       => $colorOverlay,
-    '{{DISCLAIMER_BLOCK}}'    => $disclaimerBlock,
-];
 
 $indexHtml = strtr($indexTemplate, $tokens);
 
