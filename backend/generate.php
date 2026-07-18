@@ -111,21 +111,51 @@ $colors = [
     'overlay' => sanitizeColor($_POST['colorOverlay'] ?? '', $themeColorDefaults['overlay']),
 ];
 
-if ($projectName === '' || $address === '' || $phone === '' || $toEmail === '' || $priceRange === '') {
-    fail('Missing required fields.');
+$themeSchema = $theme['schema'] ?? [];
+
+function flattenThemeSchemaFields(array $schema): array {
+    $fields = [];
+    foreach (($schema['sections'] ?? []) as $section) {
+        foreach (($section['fields'] ?? []) as $field) {
+            if (!empty($field['name'])) {
+                $fields[$field['name']] = $field;
+            }
+        }
+    }
+    return $fields;
 }
-if (!filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
-    fail('Lead email address is not valid.');
+
+function validateThemeRequest(array $schema): void {
+    $fields = flattenThemeSchemaFields($schema);
+    $requiredFields = $schema['requiredFields'] ?? [];
+    foreach ($fields as $name => $field) {
+        if (!empty($field['required']) && !in_array($name, $requiredFields, true)) {
+            $requiredFields[] = $name;
+        }
+    }
+    foreach ($requiredFields as $fieldName) {
+        if (trim((string) ($_POST[$fieldName] ?? '')) === '') {
+            fail('Missing required field: ' . $fieldName . '.');
+        }
+    }
+    foreach ($fields as $name => $field) {
+        if (($field['format'] ?? '') === 'email') {
+            $value = trim((string) ($_POST[$name] ?? ''));
+            if ($value !== '' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                fail($field['label'] . ' is not valid.');
+            }
+        }
+    }
+    foreach (($schema['requiredUploads'] ?? []) as $uploadName) {
+        $tmpName = $_FILES[$uploadName]['tmp_name'] ?? null;
+        $hasUpload = is_array($tmpName) ? !empty($tmpName[0]) : !empty($tmpName);
+        if (!$hasUpload) {
+            fail('Missing required upload: ' . $uploadName . '.');
+        }
+    }
 }
-if ($ccEmail !== '' && !filter_var($ccEmail, FILTER_VALIDATE_EMAIL)) {
-    fail('CC email address is not valid.');
-}
-if ($bccEmail !== '' && !filter_var($bccEmail, FILTER_VALIDATE_EMAIL)) {
-    fail('BCC email address is not valid.');
-}
-if (empty($_FILES['slider']['tmp_name'][0])) {
-    fail('At least one slider image is required.');
-}
+
+validateThemeRequest($themeSchema);
 
 // ---------------------------------------------------------
 // 2. Prepare a working folder for this submission
