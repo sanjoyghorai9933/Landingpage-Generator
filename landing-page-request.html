@@ -631,6 +631,7 @@
     .theme-actions .submit-btn:disabled { background: #c8c1b3; }
     #formScreen { display: none; }
     #formScreen.active { display: block; }
+    .schema-hidden { display: none !important; }
 </style>
 </head>
 <body>
@@ -991,11 +992,30 @@
    Point this at your hosted generate.php (see backend/README.md).
    ========================================================= */
 const WEBHOOK_URL = "https://luxury-residences.online/LP-Generator/backend/generate.php";
+const THEME_SCHEMAS = {
+    default: {
+        sections: [
+            { id: 'project', fields: ['projectName', 'statusBadge', 'priceRange', 'address', 'landArea', 'totalUnits', 'floors'] },
+            { id: 'contact', fields: ['phone', 'toEmail', 'ccEmail', 'bccEmail', 'crmOption', 'crmApiKey'] },
+            { id: 'content', fields: ['highlights', 'configHeading', 'priceRows', 'mapLink', 'locationAdvantages', 'aboutBuilderHeading', 'aboutBuilderText', 'disclaimerText'] },
+            { id: 'style', fields: ['colorPrimary', 'colorSecondary', 'colorBtn', 'colorCard', 'colorOverlay'] },
+            { id: 'media', fields: ['logo', 'masterplan', 'authPartnerLogo', 'slider', 'floorplanImage', 'galleryImage', 'amenityImage'] },
+            { id: 'tracking', fields: ['gtagId', 'conversionSendTo'] },
+        ],
+        validation: {
+            requiredFields: ['projectName', 'priceRange', 'address', 'phone', 'toEmail'],
+            requiredUploads: { slider: 1 },
+            formats: { toEmail: 'email', ccEmail: 'email', bccEmail: 'email' }
+        },
+        supportedTypes: ['text', 'textarea', 'rich_text', 'image', 'images', 'video', 'videos', 'buttons', 'list', 'faqs', 'testimonials', 'pricing_cards', 'feature_cards', 'team_members', 'custom_repeatable']
+    }
+};
 const AVAILABLE_THEMES = [
     {
         id: 'default',
         name: 'Default Theme',
         description: 'A polished real-estate landing page layout with hero carousel, lead forms, pricing, gallery, amenities, and location sections.',
+        schema: THEME_SCHEMAS.default
     },
 ];
 window.generatorState = window.generatorState || {};
@@ -1008,8 +1028,59 @@ const themeGrid = document.getElementById('themeGrid');
 const themeError = document.getElementById('themeError');
 const continueThemeBtn = document.getElementById('continueThemeBtn');
 
+function getSelectedThemeSchema() {
+    const selected = AVAILABLE_THEMES.find(theme => theme.id === window.generatorState.selectedTheme);
+    return selected ? selected.schema : null;
+}
+
+function getSchemaFieldNames(schema) {
+    return new Set((schema?.sections || []).flatMap(section => section.fields || []));
+}
+
+function setFieldVisibility(fieldName, visible) {
+    const aliases = {
+        slider: ['sliderList', 'addSlider', 'sliderMultiInput'],
+        floorplanImage: ['floorplanList', 'addFloorplan', 'floorplanMultiInput', 'floorplanLightbox'],
+        galleryImage: ['galleryList', 'addGallery', 'galleryMultiInput', 'galleryLightbox'],
+        amenityImage: ['amenityList', 'addAmenity', 'amenityMultiInput', 'amenityLightbox'],
+        logo: ['file_logo'],
+        masterplan: ['file_masterplan', 'masterplanLightbox'],
+        authPartnerLogo: ['file_authPartnerLogo'],
+        priceRows: ['priceRows', 'addPriceRow'],
+        highlights: ['highlightInput', 'highlightTags'],
+        locationAdvantages: ['locationAdvInput', 'locationAdvTags'],
+    };
+    [fieldName, ...(aliases[fieldName] || [])].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const wrapper = el.closest('.field, .card, .upload-box, .add-row-group, .click-toggle') || el;
+        wrapper.classList.toggle('schema-hidden', !visible);
+        wrapper.querySelectorAll?.('input, textarea, select, button').forEach(input => {
+            if (!visible) input.required = false;
+        });
+    });
+}
+
+function applyThemeSchema(themeId) {
+    const schema = AVAILABLE_THEMES.find(theme => theme.id === themeId)?.schema;
+    if (!schema) return;
+    const allowedFields = getSchemaFieldNames(schema);
+    const knownFields = new Set(Object.values(THEME_SCHEMAS).flatMap(theme => (theme.sections || []).flatMap(section => section.fields || [])));
+    knownFields.forEach(field => setFieldVisibility(field, allowedFields.has(field)));
+
+    Object.entries(schema.validation?.formats || {}).forEach(([field, format]) => {
+        const el = document.getElementById(field);
+        if (el && format === 'email') el.type = 'email';
+    });
+    (schema.validation?.requiredFields || []).forEach(field => {
+        const el = document.getElementById(field);
+        if (el) el.required = true;
+    });
+}
+
 function selectTheme(themeId) {
     window.generatorState.selectedTheme = themeId;
+    applyThemeSchema(themeId);
     themeError.style.display = 'none';
     continueThemeBtn.disabled = false;
     themeGrid.querySelectorAll('.theme-card').forEach(card => {
@@ -1435,14 +1506,13 @@ form.addEventListener('submit', async (e) => {
     formError.style.display = 'none';
     formError.textContent = 'Please fill in all required fields marked with *.';
 
-    // required text fields
-    const required = ['projectName', 'priceRange', 'address', 'phone', 'toEmail'];
-    let missing = required.some(id => !document.getElementById(id).value.trim());
+    const schema = getSelectedThemeSchema();
+    const required = schema?.validation?.requiredFields || [];
+    let missing = required.some(id => !document.getElementById(id)?.value.trim());
     if (!window.generatorState.selectedTheme) missing = true;
 
-    // required image: at least the first slider image
     const sliderItems = sliderRepeater.getItems();
-    if (!sliderItems.length || !sliderItems[0].file) missing = true;
+    if ((schema?.validation?.requiredUploads?.slider || 0) > 0 && (!sliderItems.length || !sliderItems[0].file)) missing = true;
 
     if (missing) {
         formError.style.display = 'block';

@@ -1,5 +1,50 @@
 <?php
 return [
+    'sections' => [
+        ['id' => 'project', 'title' => 'Project Details', 'fields' => [
+            ['name' => 'projectName', 'label' => 'Project Name', 'type' => 'text', 'required' => true],
+            ['name' => 'statusBadge', 'label' => 'Status Badge', 'type' => 'text'],
+            ['name' => 'priceRange', 'label' => 'Overall Price Range', 'type' => 'text', 'required' => true],
+            ['name' => 'address', 'label' => 'Address / Location Line', 'type' => 'text', 'required' => true],
+            ['name' => 'landArea', 'label' => 'Land Area', 'type' => 'text'],
+            ['name' => 'totalUnits', 'label' => 'Total Units', 'type' => 'text'],
+            ['name' => 'floors', 'label' => 'Floors / Towers', 'type' => 'text'],
+        ]],
+        ['id' => 'contact', 'title' => 'Contact & Leads', 'fields' => [
+            ['name' => 'phone', 'label' => 'Phone Number', 'type' => 'text', 'required' => true],
+            ['name' => 'toEmail', 'label' => 'Lead Email', 'type' => 'text', 'format' => 'email', 'required' => true],
+            ['name' => 'ccEmail', 'label' => 'CC Email', 'type' => 'text', 'format' => 'email'],
+            ['name' => 'bccEmail', 'label' => 'BCC Email', 'type' => 'text', 'format' => 'email'],
+            ['name' => 'crmOption', 'label' => 'Lead Delivery', 'type' => 'text'],
+            ['name' => 'crmApiKey', 'label' => 'CRM API Key', 'type' => 'text'],
+        ]],
+        ['id' => 'content', 'title' => 'Content', 'fields' => [
+            ['name' => 'highlights', 'label' => 'Highlights', 'type' => 'list'],
+            ['name' => 'configHeading', 'label' => 'Configurations Heading', 'type' => 'text'],
+            ['name' => 'priceRows', 'label' => 'Unit Pricing', 'type' => 'pricing_cards'],
+            ['name' => 'mapLink', 'label' => 'Google Maps Embed Code', 'type' => 'text'],
+            ['name' => 'locationAdvantages', 'label' => 'Location Advantages', 'type' => 'list'],
+            ['name' => 'aboutBuilderHeading', 'label' => 'About Builder Heading', 'type' => 'text'],
+            ['name' => 'aboutBuilderText', 'label' => 'About Builder Text', 'type' => 'rich_text'],
+            ['name' => 'disclaimerText', 'label' => 'Disclaimer Text', 'type' => 'textarea'],
+        ]],
+        ['id' => 'media', 'title' => 'Media', 'fields' => [
+            ['name' => 'logo', 'label' => 'Logo', 'type' => 'image'],
+            ['name' => 'masterplan', 'label' => 'Master Plan', 'type' => 'image'],
+            ['name' => 'authPartnerLogo', 'label' => 'Authorized Partner Logo', 'type' => 'image'],
+            ['name' => 'slider', 'label' => 'Slider Images', 'type' => 'images', 'required' => true, 'min' => 1],
+            ['name' => 'floorplanImage', 'label' => 'Floor Plan Images', 'type' => 'custom_repeatable', 'itemFields' => [['name' => 'image', 'type' => 'image'], ['name' => 'label', 'type' => 'text']]],
+            ['name' => 'galleryImage', 'label' => 'Gallery Images', 'type' => 'custom_repeatable', 'itemFields' => [['name' => 'image', 'type' => 'image'], ['name' => 'caption', 'type' => 'text']]],
+            ['name' => 'amenityImage', 'label' => 'Amenities', 'type' => 'feature_cards', 'itemFields' => [['name' => 'image', 'type' => 'image'], ['name' => 'label', 'type' => 'text']]],
+        ]],
+        ['id' => 'advanced', 'title' => 'Advanced', 'fields' => [
+            ['name' => 'buttonLabels', 'label' => 'Buttons', 'type' => 'buttons'],
+            ['name' => 'videoUrls', 'label' => 'Videos', 'type' => 'videos'],
+            ['name' => 'faqs', 'label' => 'FAQs', 'type' => 'faqs'],
+            ['name' => 'testimonials', 'label' => 'Testimonials', 'type' => 'testimonials'],
+            ['name' => 'teamMembers', 'label' => 'Team Members', 'type' => 'team_members'],
+        ]],
+    ],
     'requiredFields' => ['projectName', 'address', 'phone', 'toEmail', 'priceRange'],
     'requiredUploads' => ['slider'],
 ];
