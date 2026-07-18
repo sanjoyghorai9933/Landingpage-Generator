@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<title>New Landing Page Request</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Muli:wght@400;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --colorPrimary: #8a691c;
+        --colorPrimaryDark: #6e5416;
+        --colorSecondary: #3D3D3D;
+        --colorBtn: #ffffff;
+        --colorBg: #f7f5f1;
+        --colorCard: #ffffff;
+        --colorBorder: #e6e1d6;
+        --radius: 10px;
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        background: var(--colorBg);
+        font-family: 'Roboto', Arial, sans-serif;
+        color: var(--colorSecondary);
+        padding-bottom: 60px;
+    }
+    h1, h2, .brand {
+        font-family: 'Muli', 'Roboto', Arial, sans-serif;
+    }
+    header.topbar {
+        background: #ffffff;
+        border-bottom: 1px solid var(--colorBorder);
+        padding: 16px 20px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    header.topbar .brand {
+        font-weight: 800;
+        font-size: 18px;
+        color: var(--colorPrimary);
+        letter-spacing: 0.3px;
+    }
+    header.topbar .sub {
+        font-size: 12.5px;
+        color: #8a8a8a;
+        margin-top: 2px;
+    }
+    main {
+        max-width: 720px;
+        margin: 24px auto;
+        padding: 0 16px;
+    }
+    .progress {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 22px;
+    }
+    .progress .seg {
+        flex: 1;
+        height: 4px;
+        border-radius: 4px;
+        background: var(--colorBorder);
+        transition: background 0.3s;
+    }
+    .progress .seg.active { background: var(--colorPrimary); }
+
+    .card {
+        background: var(--colorCard);
+        border: 1px solid var(--colorBorder);
+        border-radius: var(--radius);
+        padding: 22px 20px;
+        margin-bottom: 18px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .card h2 {
+        font-size: 16px;
+        font-weight: 800;
+        color: var(--colorSecondary);
+        margin: 0 0 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .card h2 .num {
+        background: var(--colorPrimary);
+        color: #fff;
+        width: 24px; height: 24px;
+        border-radius: 50%;
+        font-size: 12px;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+    }
+    .card .hint {
+        font-size: 12.5px;
+        color: #999;
+        margin: 0 0 16px 32px;
+    }
+    label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 6px;
+        color: #555;
+    }
+    .field { margin-bottom: 14px; }
+    input[type="text"],
+    input[type="tel"],
+    input[type="email"],
+    input[type="url"],
+    textarea,
+    select {
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid #d9d4c8;
+        border-radius: 8px;
+        font-size: 14.5px;
+        font-family: 'Roboto', sans-serif;
+        color: var(--colorSecondary);
+        background: #fff;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+        border-color: var(--colorPrimary);
+        box-shadow: 0 0 0 3px rgba(138,105,28,0.12);
+    }
+    textarea { resize: vertical; min-height: 60px; }
+    .row2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    @media (max-width: 560px) {
+        .row2 { grid-template-columns: 1fr; }
+    }
+
+    /* Pricing rows */
+    .price-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr auto;
+        gap: 8px;
+        margin-bottom: 8px;
+        align-items: center;
+    }
+    @media (max-width: 560px) {
+        .price-row { grid-template-columns: 1fr 1fr; }
+        .price-row .price-remove { grid-column: span 2; justify-self: end; }
+    }
+    .price-row input { font-size: 13.5px; padding: 9px 10px; }
+    .price-remove {
+        background: none;
+        border: none;
+        color: #b23b3b;
+        font-size: 13px;
+        cursor: pointer;
+        padding: 6px 8px;
+        white-space: nowrap;
+    }
+    .add-row-btn {
+        background: #fbf9f4;
+        border: 1px dashed var(--colorPrimary);
+        color: var(--colorPrimary);
+        border-radius: 8px;
+        padding: 10px;
+        width: 100%;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 4px;
+    }
+    .add-row-btn:hover { background: #f5efe2; }
+    .add-row-group {
+        display: flex;
+        gap: 8px;
+        margin-top: 4px;
+    }
+    .add-row-group .add-row-btn { margin-top: 0; }
+    .add-multi-btn {
+        background: #fbf9f4;
+        border: 1px solid var(--colorPrimary);
+        color: var(--colorPrimary);
+        border-radius: 8px;
+        padding: 10px;
+        width: 100%;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .add-multi-btn:hover { background: #f5efe2; }
+
+    /* Highlights */
+    .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    .tag-list .tag {
+        background: #f2ede1;
+        border: 1px solid var(--colorBorder);
+        border-radius: 20px;
+        padding: 6px 12px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .tag button {
+        background: none; border: none; color: #999; cursor: pointer; font-size: 13px;
+    }
+
+    /* Upload boxes (single, fixed slots: logo / master plan) */
+    .upload-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+    @media (max-width: 560px) {
+        .upload-grid { grid-template-columns: 1fr; }
+    }
+    .upload-box {
+        border: 1.5px dashed #d9d4c8;
+        border-radius: 8px;
+        padding: 14px;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color 0.2s, background 0.2s;
+        position: relative;
+        overflow: hidden;
+        display: block;
+    }
+    .upload-box:hover { border-color: var(--colorPrimary); background: #fbf9f4; }
+    .upload-box input { display: none; }
+    .upload-box .label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--colorSecondary);
+    }
+    .upload-box .req { color: var(--colorPrimary); font-size: 11px; }
+    .upload-box .status {
+        font-size: 11.5px;
+        color: #8a8a8a;
+        margin-top: 4px;
+        word-break: break-all;
+    }
+    .upload-box img.thumb {
+        width: 100%;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 6px;
+        margin-bottom: 8px;
+    }
+
+    /* Dynamic repeatable image lists (slider / floor plan / gallery / amenities) */
+    .dyn-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+    @media (max-width: 560px) {
+        .dyn-list { grid-template-columns: 1fr; }
+    }
+    .dyn-item {
+        border: 1px solid var(--colorBorder);
+        border-radius: 8px;
+        padding: 10px;
+        background: #fcfbf8;
+        position: relative;
+    }
+    .dyn-item .upload-box {
+        border-style: dashed;
+        padding: 12px;
+        margin-bottom: 8px;
+    }
+    .dyn-item .upload-box img.thumb { height: 90px; }
+    .dyn-item .dyn-text-input {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #d9d4c8;
+        border-radius: 6px;
+        font-size: 13px;
+        font-family: 'Roboto', sans-serif;
+        margin-bottom: 6px;
+    }
+    .dyn-remove-btn {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        background: rgba(255,255,255,0.92);
+        border: 1px solid var(--colorBorder);
+        color: #b23b3b;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 13px;
+        line-height: 1;
+        cursor: pointer;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .dyn-item .req-badge {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        background: var(--colorPrimary);
+        color: #fff;
+        font-size: 9.5px;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 10px;
+        z-index: 2;
+        letter-spacing: 0.3px;
+    }
+
+    /* Theme colour pickers */
+    .color-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+    @media (max-width: 560px) {
+        .color-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .color-field {
+        border: 1px solid var(--colorBorder);
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+        background: #fcfbf8;
+    }
+    .color-field label {
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+    .color-field input[type="color"] {
+        width: 100%;
+        height: 40px;
+        border: 1px solid #d9d4c8;
+        border-radius: 6px;
+        padding: 2px;
+        cursor: pointer;
+        background: #fff;
+    }
+    .color-field .hex {
+        font-size: 11px;
+        color: #999;
+        margin-top: 6px;
+        font-family: monospace;
+    }
+    .theme-preview {
+        margin-top: 14px;
+        border: 1px solid var(--colorBorder);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .theme-preview .tp-nav {
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+        padding: 8px 10px 0;
+        flex-wrap: wrap;
+        background: #fff;
+    }
+    .theme-preview .tp-nav .tp-nav-link {
+        font-size: 10.5px;
+        font-weight: 600;
+        padding: 5px 9px;
+        border-radius: 4px;
+        color: #333;
+    }
+    .theme-preview .tp-nav .tp-nav-link.active {
+        /* colors set dynamically in updateThemePreview() */
+    }
+    .theme-preview .tp-section-head {
+        font-size: 12.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        text-align: center;
+        padding: 8px 10px 0;
+        background: #fff;
+    }
+    .theme-preview .tp-header {
+        padding: 14px;
+        text-align: center;
+    }
+    .theme-preview .tp-header .tp-badge {
+        display: inline-block;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+        letter-spacing: 0.4px;
+    }
+    .theme-preview .tp-header .tp-title {
+        font-weight: 800;
+        font-size: 15px;
+        display: block;
+        margin-bottom: 8px;
+    }
+    .theme-preview .tp-header .tp-btn {
+        display: inline-block;
+        font-size: 12.5px;
+        font-weight: 700;
+        padding: 9px 18px;
+        border-radius: 6px;
+        border: none;
+    }
+
+    /* Submit */
+    .submit-btn {
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        padding: 15px;
+        font-size: 15.5px;
+        font-weight: 700;
+        color: #fff;
+        cursor: pointer;
+        background: linear-gradient(-45deg, var(--colorPrimary), #ac821f, var(--colorPrimary), #b99031);
+        background-size: 300% 300%;
+        animation: gradientMove 4s ease infinite;
+        letter-spacing: 0.3px;
+    }
+    @keyframes gradientMove {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; animation: none; }
+
+    .error-msg {
+        color: #b23b3b;
+        font-size: 12.5px;
+        margin-top: 6px;
+        display: none;
+    }
+
+    /* Success screen */
+    #successScreen {
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+    }
+    #successScreen .check {
+        width: 64px; height: 64px;
+        border-radius: 50%;
+        background: var(--colorPrimary);
+        color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 30px;
+        margin: 0 auto 18px;
+    }
+    #successScreen h2 { font-size: 20px; margin-bottom: 8px; }
+    #successScreen p { color: #777; font-size: 14px; max-width: 380px; margin: 0 auto; }
+
+    #formScreen.hidden { display: none; }
+
+    /* ---------- Section picker (nav-driven show/hide) ---------- */
+    .section-picker {
+        position: relative;
+        margin-bottom: 18px;
+    }
+    .section-picker-btn {
+        width: 100%;
+        text-align: left;
+        background: #fff;
+        border: 1px solid #d9d4c8;
+        border-radius: 8px;
+        padding: 12px 14px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--colorSecondary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .section-picker-btn .chev { transition: transform 0.2s; color: var(--colorPrimary); }
+    .section-picker-btn.open .chev { transform: rotate(180deg); }
+    .section-picker-panel {
+        display: none;
+        position: absolute;
+        left: 0; right: 0;
+        top: calc(100% + 6px);
+        background: #fff;
+        border: 1px solid var(--colorBorder);
+        border-radius: 8px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        padding: 8px;
+        z-index: 20;
+    }
+    .section-picker-panel.open { display: block; }
+    .section-picker-panel label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13.5px;
+        font-weight: 500;
+        color: var(--colorSecondary);
+        padding: 9px 8px;
+        border-radius: 6px;
+        margin: 0;
+        cursor: pointer;
+    }
+    .section-picker-panel label:hover { background: #fbf9f4; }
+    .section-picker-panel input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--colorPrimary); }
+    .section-picker-panel .locked { opacity: 0.6; cursor: not-allowed; }
+
+    /* ---------- Lightbox / enquiry click-behaviour toggle ---------- */
+    .click-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12.5px;
+        font-weight: 500;
+        color: #666;
+        background: #fbf9f4;
+        border: 1px solid var(--colorBorder);
+        border-radius: 8px;
+        padding: 9px 12px;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
+    .click-toggle input { width: 15px; height: 15px; accent-color: var(--colorPrimary); margin: 0; }
+
+    /* ---------- Auto layout hint ---------- */
+    .layout-hint {
+        font-size: 11.5px;
+        color: #999;
+        margin: -4px 0 10px;
+    }
+
+    .card.section-hidden { display: none; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+    <div class="brand">Landing Page Request</div>
+    <div class="sub">Fill in your project details below — we'll generate your landing page and send you the download link</div>
+</header>
+
+<main>
+    <div id="formScreen">
+        <div class="progress">
+            <div class="seg active"></div><div class="seg active"></div><div class="seg active"></div>
+            <div class="seg active"></div><div class="seg active"></div><div class="seg active"></div>
+        </div>
+
+        <form id="requestForm">
+
+            <!-- SECTION PICKER: choose which nav sections to include; matching cards below show/hide -->
+            <div class="section-picker">
+                <button type="button" class="section-picker-btn" id="sectionPickerBtn">
+                    <span id="sectionPickerLabel">Which sections do you want on your page?</span>
+                    <span class="chev">&#9662;</span>
+                </button>
+                <div class="section-picker-panel" id="sectionPickerPanel">
+                    <label class="locked"><input type="checkbox" checked disabled> Overview (always included)</label>
+                    <label><input type="checkbox" class="section-toggle" data-section="price" checked> Price</label>
+                    <label><input type="checkbox" class="section-toggle" data-section="floorplan" checked> Floor Plan</label>
+                    <label><input type="checkbox" class="section-toggle" data-section="gallery" checked> Gallery</label>
+                    <label><input type="checkbox" class="section-toggle" data-section="location" checked> Location</label>
+                </div>
+            </div>
+
+            <!-- SECTION 1: PROJECT BASICS -->
+            <div class="card">
+                <h2><span class="num">1</span> Project Details</h2>
+                <p class="hint">Basic information shown at the top of the page</p>
+
+                <div class="field">
+                    <label for="projectName">Project Name *</label>
+                    <input type="text" id="projectName" required placeholder="e.g. Southern Star" />
+                </div>
+                <div class="row2">
+                    <div class="field">
+                        <label for="statusBadge">Status Badge</label>
+                        <input type="text" id="statusBadge" placeholder="e.g. Launching Soon" />
+                    </div>
+                    <div class="field">
+                        <label for="priceRange">Overall Price Range *</label>
+                        <input type="text" id="priceRange" required placeholder="e.g. 2.9 - 5 Cr Onwards" />
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="address">Address / Location Line *</label>
+                    <input type="text" id="address" required placeholder="e.g. Begur Road, Off Bannerghatta Road" />
+                </div>
+                <div class="row2">
+                    <div class="field">
+                        <label for="landArea">Land Area</label>
+                        <input type="text" id="landArea" placeholder="e.g. 33 Acres (Phase 1)" />
+                    </div>
+                    <div class="field">
+                        <label for="totalUnits">Total Units</label>
+                        <input type="text" id="totalUnits" placeholder="e.g. 2400+ Units" />
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="floors">Floors / Towers</label>
+                    <input type="text" id="floors" placeholder="e.g. 2B+G+25 Floors" />
+                </div>
+            </div>
+
+            <!-- SECTION 2: CONTACT -->
+            <div class="card">
+                <h2><span class="num">2</span> Contact & Leads</h2>
+                <p class="hint">Where enquiries from the page should go</p>
+
+                <div class="field">
+                    <label for="phone">Phone Number (shown on page & Call button) *</label>
+                    <input type="tel" id="phone" required placeholder="e.g. +91 7026667699" />
+                </div>
+                <div class="row2">
+                    <div class="field">
+                        <label for="toEmail">Lead Email — sends enquiries here *</label>
+                        <input type="email" id="toEmail" required placeholder="e.g. info@yourcompany.com" />
+                    </div>
+                    <div class="field">
+                        <label for="ccEmail">CC Email (optional)</label>
+                        <input type="email" id="ccEmail" placeholder="e.g. sales@yourcompany.com" />
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="bccEmail">BCC Email (optional)</label>
+                    <input type="email" id="bccEmail" placeholder="e.g. archive@yourcompany.com" />
+                </div>
+                <div class="field">
+                    <label for="crmOption">Lead Delivery</label>
+                    <select id="crmOption">
+                        <option value="email">Email only</option>
+                        <option value="crm">Email + CRM Integration</option>
+                    </select>
+                </div>
+                <div class="field" id="crmApiKeyField" style="display:none;">
+                    <label for="crmApiKey">CRM API Key (optional — leave blank to use the default)</label>
+                    <input type="text" id="crmApiKey" placeholder="e.g. your LeadRat API key" />
+                </div>
+            </div>
+
+            <!-- SECTION 3: HIGHLIGHTS -->
+            <div class="card">
+                <h2><span class="num">3</span> Highlights</h2>
+                <p class="hint">Short selling points shown in the animated highlight strip</p>
+                <div class="field">
+                    <label for="highlightInput">Type a highlight and press Enter</label>
+                    <input type="text" id="highlightInput" placeholder="e.g. Near IT Parks & Reputed Schools" />
+                </div>
+                <div class="tag-list" id="highlightTags"></div>
+                <div class="field" style="margin-top:16px;">
+                    <label for="configHeading">Configurations Heading</label>
+                    <input type="text" id="configHeading" placeholder="e.g. Premium 3/4/5 BHK Apartments" />
+                </div>
+            </div>
+
+            <!-- SECTION 4: PRICING -->
+            <div class="card" data-section="price">
+                <h2><span class="num">4</span> Unit Pricing</h2>
+                <p class="hint">Add one row per unit type — shown below the Configurations Heading, with "Starting Price" above the price</p>
+                <div id="priceRows"></div>
+                <button type="button" class="add-row-btn" id="addPriceRow">+ Add unit type</button>
+            </div>
+
+            <!-- SECTION 5: LOCATION -->
+            <div class="card" data-section="location">
+                <h2><span class="num">5</span> Location</h2>
+                <p class="hint">In Google Maps, tap Share &rarr; Embed a map &rarr; Copy HTML, and paste it below. A plain Maps link or address also works.</p>
+                <div class="field">
+                    <label for="mapLink">Google Maps Embed Code (or link / address)</label>
+                    <input type="text" id="mapLink" placeholder='&lt;iframe src="https://www.google.com/maps/embed?..."&gt;&lt;/iframe&gt;' />
+                </div>
+                <div class="field" style="margin-top:16px;">
+                    <label for="locationAdvInput">Location Advantages — type one and press Enter (shown as a bullet list below the map)</label>
+                    <input type="text" id="locationAdvInput" placeholder="e.g. 5 mins to Metro Station" />
+                </div>
+                <div class="tag-list" id="locationAdvTags"></div>
+            </div>
+
+            <!-- SECTION 6: ABOUT BUILDER -->
+            <div class="card">
+                <h2><span class="num">6</span> About Builder</h2>
+                <p class="hint">Optional — adds an "About Builder" tab to the page navigation with a short write-up. Leave the text blank to skip this section entirely (nav tab won't appear either).</p>
+                <div class="field">
+                    <label for="aboutBuilderHeading">Heading</label>
+                    <input type="text" id="aboutBuilderHeading" placeholder="e.g. About Prestige Group" />
+                </div>
+                <div class="field">
+                    <label for="aboutBuilderText">About Text</label>
+                    <textarea id="aboutBuilderText" rows="5" placeholder="A short paragraph about the builder/developer's track record, founding year, notable projects, etc."></textarea>
+                </div>
+            </div>
+
+            <!-- SECTION 7: DISCLAIMER -->
+            <div class="card">
+                <h2><span class="num">7</span> Disclaimer</h2>
+                <p class="hint">Shown in the footer of the generated page — edit freely to match your brokerage/RERA details. Want an "Authorized Partner" logo shown beside this text in a two-column layout? Upload it under Section 8 (Logo & Master Plan) — if you skip it, this text just stays full-width like today.</p>
+                <div class="field">
+                    <label for="disclaimerText">Disclaimer Text</label>
+                    <textarea id="disclaimerText" rows="5">The content is for information purposes only and does not constitute an offer to avail of any service. Prices mentioned are subject to change without notice and properties mentioned are subject to availability. Images for representation purposes only. This is the official website of Authorized Marketing Partner - PROPERTY MATRIMONY | RERA No: PRM/KA/RERA/1251/446/AG/230412/003574. We may share data with RERA registered brokers/companies for further processing. We may also send updates to the mobile number/email id registered with us. All Rights Reserved.</textarea>
+                </div>
+            </div>
+
+            <!-- SECTION 7: THEME COLORS -->
+            <div class="card">
+                <h2><span class="num">8</span> Theme Colors</h2>
+                <p class="hint">Every themed color on the generated page — accents, overlays, card backgrounds — is driven by these five</p>
+                <div class="color-grid">
+                    <div class="color-field">
+                        <label for="colorPrimary">Primary (accents, price, buttons)</label>
+                        <input type="color" id="colorPrimary" value="#8a691c" />
+                        <div class="hex" id="hex_colorPrimary">#8a691c</div>
+                    </div>
+                    <div class="color-field">
+                        <label for="colorSecondary">Secondary (headings, text)</label>
+                        <input type="color" id="colorSecondary" value="#3d3d3d" />
+                        <div class="hex" id="hex_colorSecondary">#3d3d3d</div>
+                    </div>
+                    <div class="color-field">
+                        <label for="colorBtn">Button / Light Text Color</label>
+                        <input type="color" id="colorBtn" value="#ffffff" />
+                        <div class="hex" id="hex_colorBtn">#ffffff</div>
+                    </div>
+                    <div class="color-field">
+                        <label for="colorCard">Card / Block Background</label>
+                        <input type="color" id="colorCard" value="#eae5e4" />
+                        <div class="hex" id="hex_colorCard">#eae5e4</div>
+                    </div>
+                    <div class="color-field">
+                        <label for="colorOverlay">Photo Overlay Tint</label>
+                        <input type="color" id="colorOverlay" value="#1a1a1a" />
+                        <div class="hex" id="hex_colorOverlay">#1a1a1a</div>
+                    </div>
+                </div>
+                <div class="theme-preview">
+                    <div class="tp-nav" id="tpNav">
+                        <span class="tp-nav-link" id="tpNavLink1">Home</span>
+                        <span class="tp-nav-link active" id="tpNavLink2">Amenities</span>
+                        <span class="tp-nav-link" id="tpNavLink3">Gallery</span>
+                    </div>
+                    <div class="tp-header" id="themePreviewHeader">
+                        <span class="tp-badge" id="tpBadge">Launching Soon</span>
+                        <span class="tp-title" id="tpTitle">Your Project Name</span>
+                        <button type="button" class="tp-btn" id="tpBtn">Enquire Now</button>
+                    </div>
+                    <div class="tp-section-head" id="tpSectionHead">Amenities</div>
+                    <div id="tpCard" style="height:70px;display:flex;align-items:flex-end;padding:10px;">
+                        <div id="tpCardOverlay" style="width:100%;height:100%;display:flex;align-items:flex-end;padding:8px;border-radius:6px;">
+                            <span id="tpCardText" style="font-size:12px;font-weight:700;">2 BHK — Sample Card</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 8: LOGO & MASTER PLAN (single images) -->
+            <div class="card">
+                <h2><span class="num">9</span> Logo & Master Plan</h2>
+                <p class="hint">One image each — these have a single fixed slot on the page. "Authorized Partner Logo" is optional and appears next to the Disclaimer text in the footer — leave it blank to keep the disclaimer full-width, exactly as it is today.</p>
+                <div class="upload-grid" id="singleUploadGrid"></div>
+                <label class="click-toggle">
+                    <input type="checkbox" id="masterplanLightbox">
+                    Master Plan: click image to view (lightbox) instead of opening the Enquiry form
+                </label>
+            </div>
+
+            <!-- SECTION 9: SLIDER IMAGES (unlimited) -->
+            <div class="card">
+                <h2><span class="num">10</span> Slider Images</h2>
+                <p class="hint">Shown in the top banner carousel — add as many as you like, first one is required</p>
+                <div class="dyn-list" id="sliderList"></div>
+                <div class="add-row-group">
+                    <button type="button" class="add-row-btn" id="addSlider">+ Add slider image</button>
+                    <label class="add-multi-btn">
+                        + Add multiple at once
+                        <input type="file" id="sliderMultiInput" accept="image/*" multiple hidden>
+                    </label>
+                </div>
+            </div>
+
+            <!-- SECTION 10: FLOOR PLAN IMAGES (unlimited) -->
+            <div class="card" data-section="floorplan">
+                <h2><span class="num">11</span> Floor Plan Images</h2>
+                <p class="hint">One image + unit type label per plan — add as many as you like</p>
+                <label class="click-toggle">
+                    <input type="checkbox" id="floorplanLightbox">
+                    Click image to view (lightbox) instead of opening the Enquiry form
+                </label>
+                <p class="layout-hint">Layout adapts automatically — 1-3 plans show as a grid, 4+ become a swipeable slider</p>
+                <div class="dyn-list" id="floorplanList"></div>
+                <div class="add-row-group">
+                    <button type="button" class="add-row-btn" id="addFloorplan">+ Add floor plan</button>
+                    <label class="add-multi-btn">
+                        + Add multiple at once
+                        <input type="file" id="floorplanMultiInput" accept="image/*" multiple hidden>
+                    </label>
+                </div>
+            </div>
+
+            <!-- SECTION 11: GALLERY IMAGES (unlimited) -->
+            <div class="card" data-section="gallery">
+                <h2><span class="num">12</span> Gallery Images</h2>
+                <p class="hint">Photos shown in the gallery grid — add as many as you like</p>
+                <label class="click-toggle">
+                    <input type="checkbox" id="galleryLightbox" checked>
+                    Click photo to view (lightbox) instead of opening the Enquiry form
+                </label>
+                <p class="layout-hint">Layout adapts automatically — 1-3 photos show as a grid, 4+ become a swipeable slider</p>
+                <div class="dyn-list" id="galleryList"></div>
+                <div class="add-row-group">
+                    <button type="button" class="add-row-btn" id="addGallery">+ Add gallery photo</button>
+                    <label class="add-multi-btn">
+                        + Add multiple at once
+                        <input type="file" id="galleryMultiInput" accept="image/*" multiple hidden>
+                    </label>
+                </div>
+            </div>
+
+            <!-- SECTION 13: AMENITIES (unlimited, image + text) -->
+            <div class="card">
+                <h2><span class="num">13</span> Amenities</h2>
+                <p class="hint">One image + name per amenity (e.g. Swimming Pool, Gym) — add as many as you like</p>
+                <label class="click-toggle">
+                    <input type="checkbox" id="amenityLightbox">
+                    Click image to view (lightbox) instead of opening the Enquiry form
+                </label>
+                <div class="dyn-list" id="amenityList"></div>
+                <div class="add-row-group">
+                    <button type="button" class="add-row-btn" id="addAmenity">+ Add amenity</button>
+                    <label class="add-multi-btn">
+                        + Add multiple at once
+                        <input type="file" id="amenityMultiInput" accept="image/*" multiple hidden>
+                    </label>
+                </div>
+            </div>
+
+            <!-- SECTION 14: ANALYTICS & CONVERSION TRACKING -->
+            <div class="card">
+                <h2><span class="num">14</span> Analytics & Conversion Tracking</h2>
+                <p class="hint">Optional — both fields are blank by default, so a new page ships with no tracking until you fill these in. Nothing here reuses another client's tracking IDs.</p>
+                <div class="field">
+                    <label for="gtagId">Google Tag ID (GA4 "G-XXXXXXX" or Google Ads "AW-XXXXXXX")</label>
+                    <input type="text" id="gtagId" placeholder="e.g. G-ABC1234 or AW-1234567890" />
+                </div>
+                <div class="field" style="margin-top:16px;">
+                    <label for="conversionSendTo">Google Ads Conversion "Send To" ID (optional)</label>
+                    <input type="text" id="conversionSendTo" placeholder="e.g. AW-1234567890/AbCdEfGhIjKlMnOp" />
+                    <p class="hint" style="margin-top:6px;">Found in Google Ads under Conversions &rarr; your action &rarr; Tag setup. When set, this fires as a conversion event on the Thank You page shown right after someone submits the enquiry form. If you only fill this in and leave the Tag ID above blank, the Tag ID is inferred automatically from the part before the "/".</p>
+                </div>
+            </div>
+
+
+            <div class="error-msg" id="formError">Please fill in all required fields marked with *.</div>
+            <button type="submit" class="submit-btn" id="submitBtn">Submit Request</button>
+        </form>
+    </div>
+
+    <div id="successScreen">
+        <div class="check">✓</div>
+        <h2 id="successTitle">Request submitted!</h2>
+        <p id="successMsg">We're generating your landing page now. You'll receive the download link by email shortly — you can also check back here with your reference below.</p>
+        <p style="margin-top:14px;font-weight:700;color:var(--colorSecondary)" id="refNumber"></p>
+        <a href="#" id="previewBtn" target="_blank" style="display:none;margin-top:22px;" class="submit-btn">&#128065; Preview Landing Page</a>
+        <a href="#" id="downloadBtn" target="_blank" style="display:none;margin-top:12px;" class="submit-btn" >⬇ Download Landing Page (.zip)</a>
+        <p style="margin-top:16px;">
+            <button type="button" id="editDetailsBtn" style="background:none;border:1px solid var(--colorBorder);border-radius:8px;padding:10px 18px;color:var(--colorPrimary);font-weight:700;font-size:13.5px;cursor:pointer;margin-right:10px;">&#9998; Edit details</button>
+            <button type="button" id="startOverBtn" style="background:none;border:none;color:var(--colorPrimary);text-decoration:underline;font-size:13.5px;cursor:pointer;">Create another landing page</button>
+        </p>
+    </div>
+</main>
+
+<script>
+/* =========================================================
+   CONFIG — the only line an admin needs to set once.
+   Point this at your hosted generate.php (see backend/README.md).
+   ========================================================= */
+const WEBHOOK_URL = "https://luxury-residences.online/LP-Generator/backend/generate.php";
+
+/* ---------- Section picker (nav-driven show/hide) ---------- */
+const sectionPickerBtn = document.getElementById('sectionPickerBtn');
+const sectionPickerPanel = document.getElementById('sectionPickerPanel');
+const sectionPickerLabel = document.getElementById('sectionPickerLabel');
+const sectionToggleInputs = document.querySelectorAll('.section-toggle');
+
+function updateSectionCards() {
+    sectionToggleInputs.forEach(input => {
+        const section = input.dataset.section;
+        document.querySelectorAll(`[data-section="${section}"]`).forEach(card => {
+            card.classList.toggle('section-hidden', !input.checked);
+        });
+    });
+    const total = sectionToggleInputs.length;
+    const checked = [...sectionToggleInputs].filter(i => i.checked).length;
+    sectionPickerLabel.textContent = checked === total
+        ? 'All sections included'
+        : `${checked + 1} of ${total + 1} sections included`; // +1 for the always-on Overview
+}
+sectionToggleInputs.forEach(input => input.addEventListener('change', updateSectionCards));
+sectionPickerBtn.addEventListener('click', () => {
+    sectionPickerBtn.classList.toggle('open');
+    sectionPickerPanel.classList.toggle('open');
+});
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.section-picker')) {
+        sectionPickerBtn.classList.remove('open');
+        sectionPickerPanel.classList.remove('open');
+    }
+});
+updateSectionCards();
+
+/* ---------- Lead delivery: Email only vs Email + CRM ---------- */
+const crmOptionSelect = document.getElementById('crmOption');
+const crmApiKeyField = document.getElementById('crmApiKeyField');
+crmOptionSelect.addEventListener('change', () => {
+    crmApiKeyField.style.display = crmOptionSelect.value === 'crm' ? 'block' : 'none';
+});
+
+/* ---------- Highlights (tag input) ---------- */
+const highlights = [];
+const highlightInput = document.getElementById('highlightInput');
+const highlightTags = document.getElementById('highlightTags');
+
+function renderHighlights() {
+    highlightTags.innerHTML = highlights.map((h, i) =>
+        `<span class="tag">${h}<button type="button" data-i="${i}">✕</button></span>`
+    ).join('');
+    highlightTags.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            highlights.splice(+btn.dataset.i, 1);
+            renderHighlights();
+        });
+    });
+}
+highlightInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && highlightInput.value.trim()) {
+        e.preventDefault();
+        highlights.push(highlightInput.value.trim());
+        highlightInput.value = '';
+        renderHighlights();
+    }
+});
+
+/* ---------- Location Advantages (tag input) ---------- */
+const locationAdvantages = [];
+const locationAdvInput = document.getElementById('locationAdvInput');
+const locationAdvTags = document.getElementById('locationAdvTags');
+
+function renderLocationAdv() {
+    locationAdvTags.innerHTML = locationAdvantages.map((h, i) =>
+        `<span class="tag">${h}<button type="button" data-i="${i}">✕</button></span>`
+    ).join('');
+    locationAdvTags.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            locationAdvantages.splice(+btn.dataset.i, 1);
+            renderLocationAdv();
+        });
+    });
+}
+locationAdvInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && locationAdvInput.value.trim()) {
+        e.preventDefault();
+        locationAdvantages.push(locationAdvInput.value.trim());
+        locationAdvInput.value = '';
+        renderLocationAdv();
+    }
+});
+
+/* ---------- Pricing rows ---------- */
+const priceRowsEl = document.getElementById('priceRows');
+
+function addPriceRow(type = '', area = '', price = '') {
+    const row = document.createElement('div');
+    row.className = 'price-row';
+    row.innerHTML = `
+        <input type="text" placeholder="Type (e.g. 2 BHK)" class="p-type" value="${type}">
+        <input type="text" placeholder="Area (e.g. 1100-1200 Sq.ft)" class="p-area" value="${area}">
+        <input type="text" placeholder="Price (e.g. 1.2 Cr Onwards)" class="p-price" value="${price}">
+        <button type="button" class="price-remove">Remove</button>
+    `;
+    row.querySelector('.price-remove').addEventListener('click', () => row.remove());
+    priceRowsEl.appendChild(row);
+}
+document.getElementById('addPriceRow').addEventListener('click', () => addPriceRow());
+// start with 2 blank rows
+addPriceRow();
+addPriceRow();
+
+/* ---------- Theme colors ---------- */
+const colorIds = ['colorPrimary', 'colorSecondary', 'colorBtn', 'colorCard', 'colorOverlay'];
+function updateThemePreview() {
+    const primary = document.getElementById('colorPrimary').value;
+    const secondary = document.getElementById('colorSecondary').value;
+    const btnText = document.getElementById('colorBtn').value;
+    const card = document.getElementById('colorCard').value;
+    const overlay = document.getElementById('colorOverlay').value;
+
+    colorIds.forEach(id => {
+        document.getElementById('hex_' + id).textContent = document.getElementById(id).value;
+    });
+
+    document.getElementById('themePreviewHeader').style.background = secondary;
+    const badge = document.getElementById('tpBadge');
+    badge.style.background = primary;
+    badge.style.color = btnText;
+    document.getElementById('tpTitle').style.color = '#ffffff';
+    const btn = document.getElementById('tpBtn');
+    btn.style.background = primary;
+    btn.style.color = btnText;
+
+    // navigation active link (matches .navbar.micro-navbar .nav-item .nav-link.active on the real page)
+    const navActive = document.getElementById('tpNavLink2');
+    navActive.style.background = primary;
+    navActive.style.color = btnText;
+
+    // section heading (matches .section .head on the real page)
+    document.getElementById('tpSectionHead').style.color = primary;
+
+    document.getElementById('tpCard').style.background = card;
+    const cardOverlay = document.getElementById('tpCardOverlay');
+    cardOverlay.style.background = `linear-gradient(180deg, ${overlay} 0%, transparent 100%)`;
+    document.getElementById('tpCardText').style.color = btnText;
+}
+colorIds.forEach(id => document.getElementById(id).addEventListener('input', updateThemePreview));
+updateThemePreview();
+
+/* ---------- Single fixed-slot uploads (logo, master plan) ---------- */
+const singleUploadFields = [
+    { id: 'logo', label: 'Logo', required: false },
+    { id: 'masterplan', label: 'Master Plan', required: false },
+    { id: 'authPartnerLogo', label: 'Authorized Partner Logo', required: false },
+];
+const singleUploadGrid = document.getElementById('singleUploadGrid');
+singleUploadFields.forEach(f => {
+    const box = document.createElement('label');
+    box.className = 'upload-box';
+    box.innerHTML = `
+        <input type="file" accept="image/*" id="file_${f.id}">
+        <div class="label">${f.label} ${f.required ? '<span class="req">*</span>' : ''}</div>
+        <div class="status" id="status_${f.id}">Tap to choose photo</div>
+    `;
+    singleUploadGrid.appendChild(box);
+});
+singleUploadFields.forEach(f => {
+    const input = document.getElementById(`file_${f.id}`);
+    const box = input.closest('.upload-box');
+    input.addEventListener('change', () => {
+        const file = input.files[0];
+        const statusEl = document.getElementById(`status_${f.id}`);
+        if (file) {
+            statusEl.textContent = file.name;
+            const existingThumb = box.querySelector('img.thumb');
+            if (existingThumb) existingThumb.remove();
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = document.createElement('img');
+                img.className = 'thumb';
+                img.src = e.target.result;
+                box.insertBefore(img, box.firstChild);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            statusEl.textContent = 'Tap to choose photo';
+        }
+    });
+});
+
+/* ---------- Generic repeatable image list (slider / floorplan / gallery / amenities) ----------
+   Each list keeps an array of { file, text } items. Rendered as .dyn-item cards with an
+   upload-box + optional text input + remove button. Files/text pulled at submit time. */
+function createDynRepeater(opts) {
+    const {
+        containerId,
+        withText = false,
+        textPlaceholder = '',
+        uploadLabel = 'Photo',
+        minItems = 0,
+        firstRequired = false,
+    } = opts;
+
+    const container = document.getElementById(containerId);
+    let items = []; // { id, file, text }
+    let uid = 0;
+
+    function render() {
+        container.innerHTML = '';
+        items.forEach((item, idx) => {
+            const el = document.createElement('div');
+            el.className = 'dyn-item';
+            el.dataset.id = item.id;
+
+            const showRemove = !(firstRequired && idx === 0 && items.length === 1);
+            const reqBadge = (firstRequired && idx === 0) ? '<span class="req-badge">Required</span>' : '';
+
+            el.innerHTML = `
+                ${reqBadge}
+                ${showRemove ? '<button type="button" class="dyn-remove-btn" title="Remove">✕</button>' : ''}
+                <label class="upload-box">
+                    <input type="file" accept="image/*" class="dyn-file-input">
+                    <div class="label">${uploadLabel} ${idx + 1}</div>
+                    <div class="status">${item.file ? item.file.name : 'Tap to choose photo'}</div>
+                </label>
+                ${withText ? `<input type="text" class="dyn-text-input" placeholder="${textPlaceholder}" value="${item.text || ''}">` : ''}
+            `;
+
+            // existing thumbnail
+            if (item.thumbDataUrl) {
+                const img = document.createElement('img');
+                img.className = 'thumb';
+                img.src = item.thumbDataUrl;
+                el.querySelector('.upload-box').insertBefore(img, el.querySelector('.upload-box').firstChild);
+            }
+
+            const fileInput = el.querySelector('.dyn-file-input');
+            fileInput.addEventListener('change', () => {
+                const file = fileInput.files[0];
+                item.file = file || null;
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        item.thumbDataUrl = e.target.result;
+                        render();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    item.thumbDataUrl = null;
+                    render();
+                }
+            });
+
+            if (withText) {
+                const textInput = el.querySelector('.dyn-text-input');
+                textInput.addEventListener('input', () => { item.text = textInput.value; });
+            }
+
+            const removeBtn = el.querySelector('.dyn-remove-btn');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', () => {
+                    items = items.filter(it => it.id !== item.id);
+                    if (items.length < minItems) addItem();
+                    render();
+                });
+            }
+
+            container.appendChild(el);
+        });
+    }
+
+    function addItem() {
+        items.push({ id: ++uid, file: null, text: '', thumbDataUrl: null });
+        render();
+    }
+
+    // Fill one item's file + thumbnail (used by both single add and bulk add)
+    function setFile(item, file) {
+        item.file = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            item.thumbDataUrl = e.target.result;
+            render();
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Bulk-add: takes a FileList (from a multi-select <input>) and creates one
+    // item per file in one go. Reuses the first empty/unfilled slot (e.g. the
+    // seeded required-first item) instead of leaving it as a redundant blank row.
+    function addFiles(fileList) {
+        const files = Array.from(fileList || []);
+        if (files.length === 0) return;
+        let startIdx = 0;
+        const emptySlot = items.find(it => !it.file);
+        if (emptySlot) {
+            setFile(emptySlot, files[0]);
+            startIdx = 1;
+        }
+        for (let i = startIdx; i < files.length; i++) {
+            const item = { id: ++uid, file: null, text: '', thumbDataUrl: null };
+            items.push(item);
+            setFile(item, files[i]);
+        }
+        render();
+    }
+
+    // seed with minItems (at least 1 if firstRequired)
+    const seedCount = Math.max(minItems, firstRequired ? 1 : 0);
+    for (let i = 0; i < seedCount; i++) addItem();
+    if (seedCount === 0) render();
+
+    return {
+        addItem,
+        addFiles,
+        getItems: () => items,
+    };
+}
+
+const sliderRepeater = createDynRepeater({
+    containerId: 'sliderList',
+    withText: false,
+    uploadLabel: 'Slide',
+    minItems: 1,
+    firstRequired: true,
+});
+document.getElementById('addSlider').addEventListener('click', () => sliderRepeater.addItem());
+document.getElementById('sliderMultiInput').addEventListener('change', (e) => {
+    sliderRepeater.addFiles(e.target.files);
+    e.target.value = '';
+});
+
+const floorplanRepeater = createDynRepeater({
+    containerId: 'floorplanList',
+    withText: true,
+    textPlaceholder: 'Unit type (e.g. 2 BHK)',
+    uploadLabel: 'Floor Plan',
+    minItems: 1,
+});
+document.getElementById('addFloorplan').addEventListener('click', () => floorplanRepeater.addItem());
+document.getElementById('floorplanMultiInput').addEventListener('change', (e) => {
+    floorplanRepeater.addFiles(e.target.files);
+    e.target.value = '';
+});
+
+const galleryRepeater = createDynRepeater({
+    containerId: 'galleryList',
+    withText: true,
+    textPlaceholder: 'Caption (optional)',
+    uploadLabel: 'Photo',
+    minItems: 1,
+});
+document.getElementById('addGallery').addEventListener('click', () => galleryRepeater.addItem());
+document.getElementById('galleryMultiInput').addEventListener('change', (e) => {
+    galleryRepeater.addFiles(e.target.files);
+    e.target.value = '';
+});
+
+const amenityRepeater = createDynRepeater({
+    containerId: 'amenityList',
+    withText: true,
+    textPlaceholder: 'Amenity name (e.g. Swimming Pool)',
+    uploadLabel: 'Amenity',
+    minItems: 1,
+});
+document.getElementById('addAmenity').addEventListener('click', () => amenityRepeater.addItem());
+document.getElementById('amenityMultiInput').addEventListener('change', (e) => {
+    amenityRepeater.addFiles(e.target.files);
+    e.target.value = '';
+});
+
+/* ---------- Submit ---------- */
+const form = document.getElementById('requestForm');
+const formError = document.getElementById('formError');
+const submitBtn = document.getElementById('submitBtn');
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    formError.style.display = 'none';
+    formError.textContent = 'Please fill in all required fields marked with *.';
+
+    // required text fields
+    const required = ['projectName', 'priceRange', 'address', 'phone', 'toEmail'];
+    let missing = required.some(id => !document.getElementById(id).value.trim());
+
+    // required image: at least the first slider image
+    const sliderItems = sliderRepeater.getItems();
+    if (!sliderItems.length || !sliderItems[0].file) missing = true;
+
+    if (missing) {
+        formError.style.display = 'block';
+        formError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+
+    const fd = new FormData();
+    fd.append('projectName', document.getElementById('projectName').value.trim());
+    fd.append('statusBadge', document.getElementById('statusBadge').value.trim());
+    fd.append('priceRange', document.getElementById('priceRange').value.trim());
+    fd.append('address', document.getElementById('address').value.trim());
+    fd.append('landArea', document.getElementById('landArea').value.trim());
+    fd.append('totalUnits', document.getElementById('totalUnits').value.trim());
+    fd.append('floors', document.getElementById('floors').value.trim());
+    fd.append('phone', document.getElementById('phone').value.trim());
+    fd.append('toEmail', document.getElementById('toEmail').value.trim());
+    fd.append('ccEmail', document.getElementById('ccEmail').value.trim());
+    fd.append('bccEmail', document.getElementById('bccEmail').value.trim());
+    fd.append('mapLink', document.getElementById('mapLink').value.trim());
+    fd.append('locationAdvantages', JSON.stringify(locationAdvantages));
+    fd.append('highlights', JSON.stringify(highlights));
+    fd.append('configHeading', document.getElementById('configHeading').value.trim());
+    fd.append('aboutBuilderHeading', document.getElementById('aboutBuilderHeading').value.trim());
+    fd.append('aboutBuilderText', document.getElementById('aboutBuilderText').value.trim());
+    fd.append('disclaimerText', document.getElementById('disclaimerText').value.trim());
+    fd.append('gtagId', document.getElementById('gtagId').value.trim());
+    fd.append('conversionSendTo', document.getElementById('conversionSendTo').value.trim());
+
+    // lead delivery (email only vs email + CRM)
+    fd.append('crmOption', crmOptionSelect.value);
+    fd.append('crmApiKey', document.getElementById('crmApiKey').value.trim());
+
+    // click behaviour: lightbox view vs Enquiry modal
+    fd.append('floorplanLightbox', document.getElementById('floorplanLightbox').checked ? '1' : '0');
+    fd.append('galleryLightbox', document.getElementById('galleryLightbox').checked ? '1' : '0');
+    fd.append('amenityLightbox', document.getElementById('amenityLightbox').checked ? '1' : '0');
+    fd.append('masterplanLightbox', document.getElementById('masterplanLightbox').checked ? '1' : '0');
+
+    // which nav sections to include on the generated page
+    fd.append('includePrice', document.querySelector('.section-toggle[data-section="price"]').checked ? '1' : '0');
+    fd.append('includeFloorplan', document.querySelector('.section-toggle[data-section="floorplan"]').checked ? '1' : '0');
+    fd.append('includeGallery', document.querySelector('.section-toggle[data-section="gallery"]').checked ? '1' : '0');
+    fd.append('includeLocation', document.querySelector('.section-toggle[data-section="location"]').checked ? '1' : '0');
+
+    // theme colors
+    fd.append('colorPrimary', document.getElementById('colorPrimary').value);
+    fd.append('colorSecondary', document.getElementById('colorSecondary').value);
+    fd.append('colorBtn', document.getElementById('colorBtn').value);
+    fd.append('colorCard', document.getElementById('colorCard').value);
+    fd.append('colorOverlay', document.getElementById('colorOverlay').value);
+
+    const priceRows = [...priceRowsEl.querySelectorAll('.price-row')].map(row => ({
+        type: row.querySelector('.p-type').value.trim(),
+        area: row.querySelector('.p-area').value.trim(),
+        price: row.querySelector('.p-price').value.trim(),
+    })).filter(r => r.type || r.area || r.price);
+    fd.append('priceRows', JSON.stringify(priceRows));
+
+    // single fixed-slot uploads
+    singleUploadFields.forEach(f => {
+        const file = document.getElementById(`file_${f.id}`).files[0];
+        if (file) fd.append(f.id, file, file.name);
+    });
+
+    // dynamic slider images -> slider[]
+    sliderItems.forEach(item => {
+        if (item.file) fd.append('slider[]', item.file, item.file.name);
+    });
+
+    // dynamic floor plans -> floorplanImage[] + floorplanLabel[] (parallel arrays)
+    floorplanRepeater.getItems().forEach(item => {
+        if (item.file) {
+            fd.append('floorplanImage[]', item.file, item.file.name);
+            fd.append('floorplanLabel[]', item.text || '');
+        }
+    });
+
+    // dynamic gallery images -> galleryImage[] + galleryCaption[]
+    galleryRepeater.getItems().forEach(item => {
+        if (item.file) {
+            fd.append('galleryImage[]', item.file, item.file.name);
+            fd.append('galleryCaption[]', item.text || '');
+        }
+    });
+
+    // dynamic amenities -> amenityImage[] + amenityLabel[] (parallel arrays)
+    amenityRepeater.getItems().forEach(item => {
+        if (item.file) {
+            fd.append('amenityImage[]', item.file, item.file.name);
+            fd.append('amenityLabel[]', item.text || '');
+        }
+    });
+
+    const refNumber = 'REQ-' + Date.now().toString().slice(-8);
+    fd.append('refNumber', refNumber);
+
+    try {
+        const res = await fetch(WEBHOOK_URL, { method: 'POST', body: fd });
+        if (!res.ok) throw new Error('Request failed');
+
+        let data = {};
+        try { data = await res.json(); } catch (_) { /* no JSON body returned */ }
+
+        document.getElementById('formScreen').classList.add('hidden');
+        document.getElementById('successScreen').style.display = 'block';
+        document.getElementById('refNumber').textContent = 'Reference: ' + refNumber;
+
+        const previewBtn = document.getElementById('previewBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        if (data.previewLink) {
+            previewBtn.href = data.previewLink;
+            previewBtn.style.display = 'block';
+        }
+        if (data.downloadLink) {
+            downloadBtn.href = data.downloadLink;
+            downloadBtn.style.display = 'block';
+            document.getElementById('successTitle').textContent = 'Your landing page is ready!';
+            document.getElementById('successMsg').textContent = 'Preview it below, download the full folder (index.html, images, CSS/JS, and the enquiry form backend) as a zip, or go back and edit your details.';
+        } else {
+            document.getElementById('successMsg').textContent = 'We\'re generating your landing page now. You\'ll receive the download link by email shortly.';
+        }
+    } catch (err) {
+        formError.textContent = 'Something went wrong submitting your request. Please check your connection and try again.';
+        formError.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Request';
+    }
+});
+
+document.getElementById('editDetailsBtn').addEventListener('click', () => {
+    document.getElementById('successScreen').style.display = 'none';
+    document.getElementById('formScreen').classList.remove('hidden');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit Request';
+    formError.style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+document.getElementById('startOverBtn').addEventListener('click', () => location.reload());
+</script>
+
+</body>
+</html>
